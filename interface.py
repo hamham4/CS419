@@ -6,11 +6,16 @@
 
 
 import curses
+from collections import namedtuple
+from datetime import date
+
+
+DateWindow = namedtuple("dateWindow", "startYear startMonth startDay endYear endMonth endDay")
 
 def displayOptions(screen, subwin):
 	#Where the options will be located in the window
 	start_y = 0
-	start_x = 0
+	start_x = 0 
 	numOptions = 4
 	subwin.addstr(start_y, start_x, "Select an option, then hit the return key.", curses.A_BOLD)
 	subwin.addstr(start_y + 1, start_x, "1: Add a username (at least one needed)")
@@ -55,28 +60,130 @@ def getMenuChoice(screen, subwin, win):
 	#Return the user's selection
 	return userSelection
 
-def selectUsernames(usernames, screen, subwin, win):
-	#Coordinates of where text will belocated
+def getDatePart(part, screen, subwin, win, y_position):
+	pass
+
+def specifyDataWindow(screen, subwin, win):
+	#Coordinates of where text will be located
 	start_y = 0
 	start_x = 0
-	subwin.addstr(start_y, start_x, "Enter a username: ", curses.A_BOLD)
 
-	
-	#Refresh screen (is the necessary?)
+def validateDate():
+	pass
+
+	#Display instructions
+	subwin.addstr(start_y, start_x, "Specify a window start and end date.", curses.A_BOLD)
+	start_y = start_y + 1
+	subwin.addstr(start_y, start_x, "Enter start date")
+	start_y = start_y + 1
+	startYear = getDatePart("year", screen, subwin, win, start_y)
+	startMonth = getDatePart("month", screen, subwin, win, start_y)
+	startDate = getDatePart("day", screen, subwin, win, start_y)
+
+	validateDate()
+
+	subwin.addstr(start_y, start_x, "Enter end date")
+	endYear = getDatePart("year", screen, subwin, win, start_y)
+	endMonth = getDatePart("month", screen, subwin, win, start_y)
+	endDate = getDatePart("day", screen, subwin, win, start_y)
+
+	#Refresh screens
 	screen.noutrefresh()
 	win.noutrefresh()
 	subwin.noutrefresh()
 	curses.doupdate()
+
+	#Turn on cursor and echo
+	curses.echo()
+	curses.curs_set(1)
+
+def selectUsernames(screen, subwin, win):
+	#Stores list of desired attendees
+	attendees = list()
+
+	#Coordinates of where text will be located
+	start_y = 0
+	start_x = 0
+
+
+	#Display Instructions
+	subwin.addstr(start_y, start_x, "Enter at least one username. ", curses.A_BOLD)
+
+	#Refresh screens
+	screen.noutrefresh()
+	win.noutrefresh()
+	subwin.noutrefresh()
+	curses.doupdate()
+
+	#Turn on cursor and echo
+	curses.echo()
+	curses.curs_set(1)
+
+	#Continue to get attendees until input = n or N
+	addAttendee = True
+	while addAttendee == True:
+
+		#Get and add username to attendees list
+		subwin.addstr(start_y + 1, start_x, "Username: ")
+		username = subwin.getstr()
+		attendees.append(username)
+		subwin.addstr(start_y + 1, start_x, username + " has been added as a desired attendee.", curses.color_pair(2))
+		
+		#Prompt for additonal attendees
+		subwin.addstr(start_y + 2, start_x, "Add another attendee? y/n: ")
+		input = subwin.getch()
+
+		#Validate input
+		while input != ord('n') and  input != ord('N') and input != ord('y') and input != ord('Y'):
+			subwin.clear()
+			subwin.addstr(start_y + 1, start_x, "Only enter 'y' or 'n': ", curses.color_pair(1))
+			input = subwin.getch()
+
+		#Update addAttendee boolean
+		if input == ord('n') or input == ord('N'):
+			addAttendee = False
+		elif input == ord('y') or input == ord('Y'):
+			addAttendee = True
+
+		#Clear the input window
+		subwin.clear()
+
+	#Dispaly list of added attendees
+	subwin.addstr(start_y, start_x, "The following attendees were added: ", curses.A_BOLD)
+	start_y = start_y + 1
+	for attendee in attendees:
+		subwin.addstr(start_y, start_x, attendee)
+		start_y = start_y + 1
+
+		#Refresh screen (is the necessary?)
+		screen.noutrefresh()
+		win.noutrefresh()
+		subwin.noutrefresh()
+		curses.doupdate()
+
+	#Return to options window
+	subwin.addstr(start_y, start_x, "Hit Enter to continue")
+	curses.curs_set(0)
+	subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
 	
+	screen.noutrefresh()
+	win.noutrefresh()
+	subwin.noutrefresh()
+	curses.doupdate()
+
+	input = subwin.getch()
+	return attendees
+
 
 def main(screen):
 	#User's selections
-	usernames = list()
+	attendees = None
 
-
+	#Set default date window as tomorrow
+	dateWindow = DateWindow(date.today().year, date.today().month, date.today().day + 1, date.today().year, date.today().month, date.today().day + 1)
 
 	#Define color options
-	curses.init_pair(1,curses.COLOR_RED, curses.COLOR_WHITE)
+	curses.init_pair(1,curses.COLOR_RED, curses.COLOR_BLACK)
 	curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)
 
 	#Adds a title and fills in remaining line
@@ -109,8 +216,16 @@ def main(screen):
 	selection = getMenuChoice(screen, subwin, win)
 	subwin.clear()
 	if selection == ord('1'):
-		selectUsernames(usernames, screen, subwin, win)
+		attendees = selectUsernames(screen, subwin, win)
 
+	elif selection == ord('2'):
+		dateWindow = specifyDataWindow(screen, subwin, win)
+
+	subwin.clear()
+	screen.noutrefresh()
+	win.noutrefresh()
+	subwin.noutrefresh()
+	curses.doupdate()
 	
 	screen.getch()
 
