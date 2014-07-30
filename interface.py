@@ -61,41 +61,81 @@ def getMenuChoice(screen, subwin, win):
 	return userSelection
 
 def getDatePart(part, screen, subwin, win, y_position):
-	pass
-
-def specifyDataWindow(screen, subwin, win):
-	#Coordinates of where text will be located
-	start_y = 0
+	curses.echo()
+	start_y = y_position
 	start_x = 0
+	if part == "year":
+		subwin.addstr(start_y, start_x, "Enter year yyyy: ")
+		input = subwin.getstr()
+		return input
+	elif part == "month":
+		subwin.addstr(start_y, start_x, "Enter month 1-12: ")
+		input = subwin.getstr()
+		return input
+	elif part == "day":
+		subwin.addstr(start_y, start_x, "Enter day 1-31: ")
+		input = subwin.getstr()
+		return input
 
 def validateDate():
 	pass
 
+def specifyDataWindow(screen, subwin, win):
+
+	#Turn on cursor and echo
+	curses.echo()
+	curses.curs_set(1)
+
+	#Coordinates of where text will be located
+	start_y = 0
+	start_x = 0
+
 	#Display instructions
 	subwin.addstr(start_y, start_x, "Specify a window start and end date.", curses.A_BOLD)
 	start_y = start_y + 1
-	subwin.addstr(start_y, start_x, "Enter start date")
+	subwin.addstr(start_y, start_x, "Enter start date", curses.color_pair(2))
 	start_y = start_y + 1
 	startYear = getDatePart("year", screen, subwin, win, start_y)
+	start_y = start_y + 1
 	startMonth = getDatePart("month", screen, subwin, win, start_y)
-	startDate = getDatePart("day", screen, subwin, win, start_y)
+	start_y = start_y + 1
+	startDay = getDatePart("day", screen, subwin, win, start_y)
+	start_y = start_y + 1
 
 	validateDate()
 
-	subwin.addstr(start_y, start_x, "Enter end date")
+	subwin.addstr(start_y, start_x, "Enter end date", curses.color_pair(2))
+	start_y = start_y + 1
 	endYear = getDatePart("year", screen, subwin, win, start_y)
+	start_y = start_y + 1
 	endMonth = getDatePart("month", screen, subwin, win, start_y)
-	endDate = getDatePart("day", screen, subwin, win, start_y)
+	start_y = start_y + 1
+	endDay = getDatePart("day", screen, subwin, win, start_y)
+	start_y = start_y + 1
 
+	validateDate() 
+
+	subwin.clear()
+	start_y = 0
+	subwin.addstr(start_y, start_x, "Date window " + startYear + "\\" + startMonth + "\\" + startDay + " - " + endYear + "\\" + endMonth + "\\" + endDay + " was saved.")
+	start_y = start_y + 1
+	
 	#Refresh screens
 	screen.noutrefresh()
 	win.noutrefresh()
 	subwin.noutrefresh()
 	curses.doupdate()
 
-	#Turn on cursor and echo
-	curses.echo()
-	curses.curs_set(1)
+	#Return to options window
+	subwin.addstr(start_y, start_x, "Hit Enter to continue")
+	curses.curs_set(0)
+	subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+	
+	input = subwin.getch()
+
+	dateWindow = DateWindow(startYear, startMonth, startDay, endYear, endMonth, endDay)
+
+	return dateWindow
 
 def selectUsernames(screen, subwin, win):
 	#Stores list of desired attendees
@@ -220,6 +260,9 @@ def main(screen):
 
 	elif selection == ord('2'):
 		dateWindow = specifyDataWindow(screen, subwin, win)
+
+	elif selection == ord('3'):
+		pass
 
 	subwin.clear()
 	screen.noutrefresh()
