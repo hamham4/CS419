@@ -1,6 +1,7 @@
 <?php
 
 # Input Parameters
+# Hard Coded for testing
 $givenStartyear = "2014";
 $givenStartmonth = "07";
 $givenStartday = "31";
@@ -80,9 +81,15 @@ foreach ($entries as $entry) {
 
     }
 	
+	$i += 1;
+	
+    $varNameFull = "busy" . $i;
+	
 	$arr = array($googleCalYearStart, $googleCalMonthStart, $googleCalDayStart, $googleCalStartTime, $googleCalEndTime);
+	$vr = $varNameFull;
 
-	echo json_encode($arr);
+	$varNameFull = json_encode($arr);
+	echo $vr . " = " . $varNameFull;
 	echo "<br/>";
 	
 	$fields[] = array($googleCalYearStart, $googleCalMonthStart, $googleCalDayStart, $googleCalStartTime, $googleCalEndTime);
