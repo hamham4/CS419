@@ -10,7 +10,8 @@ from collections import namedtuple
 from datetime import date
 
 
-DateWindow = namedtuple("dateWindow", "startYear startMonth startDay endYear endMonth endDay")
+DateWindow = namedtuple("DateWindow", "startYear startMonth startDay endYear endMonth endDay")
+TimeWindow = namedtuple("TimeWindow", "startHour, startMin, endHour, endMin")
 
 def displayOptions(screen, subwin):
 	#Where the options will be located in the window
@@ -59,7 +60,20 @@ def getMenuChoice(screen, subwin, win):
 
 	#Return the user's selection
 	return userSelection
+def getTimePart(part, screen, subwin, win, y_position):
+	curses.echo()
+	start_y = y_position
+	start_x = 0
+	if part == "hour":
+		subwin.addstr(start_y, start_x, "Enter hour in 24hr format (0-23): ")
+		input = subwin.getstr()
+		return input
+	elif part == "min":
+		subwin.addstr(start_y, start_x, "Enter min (00-59): ")
+		input = subwin.getstr()
+		return input
 
+#Return the user's selection
 def getDatePart(part, screen, subwin, win, y_position):
 	curses.echo()
 	start_y = y_position
@@ -80,6 +94,65 @@ def getDatePart(part, screen, subwin, win, y_position):
 def validateDate():
 	pass
 
+def validateTime():
+	pass
+
+def specifyTimeWindow(screen, subwin, win):
+	#Turn on cursor and echo
+	curses.echo()
+	curses.curs_set(1)
+
+	#Coordinates of where text will be located
+	start_y = 0
+	start_x = 0
+
+	#Display instructions
+	subwin.addstr(start_y, start_x, "Specify a window start and end time.", curses.A_BOLD)
+	start_y = start_y + 1
+
+	#Get start time of window
+	subwin.addstr(start_y, start_x, "Enter start time", curses.color_pair(2))
+	start_y = start_y + 1
+	startHour = getTimePart("hour", screen, subwin, win, start_y)
+	start_y = start_y + 1
+	startMin = getTimePart("min", screen, subwin, win, start_y)
+	start_y = start_y + 1
+
+	validateTime()
+
+	#Get end time of window
+	subwin.addstr(start_y, start_x, "Enter end time", curses.color_pair(2))
+	start_y = start_y + 1
+	endHour = getTimePart("hour", screen, subwin, win, start_y)
+	start_y = start_y + 1
+	endMin = getTimePart("min", screen, subwin, win, start_y)
+	start_y = start_y + 1
+
+	validateTime()
+
+	subwin.clear()
+	start_y = 0
+	subwin.addstr(start_y, start_x, "Time window " + startHour+ ":" + startMin + " - " + endHour + ":" + endMin + " was saved.")
+	start_y = start_y + 1
+	
+	#Refresh screens
+	screen.noutrefresh()
+	win.noutrefresh()
+	subwin.noutrefresh()
+	curses.doupdate()
+
+	#Return to options window
+	subwin.addstr(start_y, start_x, "Hit Enter to continue")
+	curses.curs_set(0)
+	subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+	
+	input = subwin.getch()
+
+	#Store date window as a named tuple
+	timeWindow = TimeWindow(startHour, startMin, endHour, endMin)
+
+	return timeWindow
+
 def specifyDataWindow(screen, subwin, win):
 
 	#Turn on cursor and echo
@@ -93,6 +166,8 @@ def specifyDataWindow(screen, subwin, win):
 	#Display instructions
 	subwin.addstr(start_y, start_x, "Specify a window start and end date.", curses.A_BOLD)
 	start_y = start_y + 1
+
+	#Get start date of window
 	subwin.addstr(start_y, start_x, "Enter start date", curses.color_pair(2))
 	start_y = start_y + 1
 	startYear = getDatePart("year", screen, subwin, win, start_y)
@@ -104,6 +179,7 @@ def specifyDataWindow(screen, subwin, win):
 
 	validateDate()
 
+	#Get end date of window
 	subwin.addstr(start_y, start_x, "Enter end date", curses.color_pair(2))
 	start_y = start_y + 1
 	endYear = getDatePart("year", screen, subwin, win, start_y)
@@ -133,6 +209,7 @@ def specifyDataWindow(screen, subwin, win):
 	
 	input = subwin.getch()
 
+	#Store date window as a named tuple
 	dateWindow = DateWindow(startYear, startMonth, startDay, endYear, endMonth, endDay)
 
 	return dateWindow
@@ -221,7 +298,7 @@ def main(screen):
 
 	#Set default date window as tomorrow
 	dateWindow = DateWindow(date.today().year, date.today().month, date.today().day + 1, date.today().year, date.today().month, date.today().day + 1)
-
+	timeWindow = TimeWindow("9", "00", "17", "00")
 	#Define color options
 	curses.init_pair(1,curses.COLOR_RED, curses.COLOR_BLACK)
 	curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)
@@ -262,7 +339,7 @@ def main(screen):
 		dateWindow = specifyDataWindow(screen, subwin, win)
 
 	elif selection == ord('3'):
-		pass
+		timeWindow = specifyTimeWindow(screen, subwin, win)
 
 	subwin.clear()
 	screen.noutrefresh()
