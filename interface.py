@@ -45,7 +45,7 @@ def getMenuChoice(screen, subwin, win):
 		curses.curs_set(1)
 		curses.echo()
 		x = subwin.getch()
-		if x == ord('1') or x == ord('2') or x == ord('3'):
+		if x == ord('1') or x == ord('2') or x == ord('3') or x == ord('q') or x == ord('Q'):
 			userSelection = x
 
 		#Refresh screen (is the necessary?)
@@ -329,25 +329,30 @@ def main(screen):
 	#Redraw the screen
 	curses.doupdate()
 
-	#Display menu options in subwindow and ask for user's choice
-	selection = getMenuChoice(screen, subwin, win)
-	subwin.clear()
-	if selection == ord('1'):
-		attendees = selectUsernames(screen, subwin, win)
+	displayMenu = True
+	while displayMenu == True:
 
-	elif selection == ord('2'):
-		dateWindow = specifyDataWindow(screen, subwin, win)
+		#Display menu options in subwindow and ask for user's choice
+		selection = getMenuChoice(screen, subwin, win)
+		subwin.clear()
+		if selection == ord('1'):
+			attendees = selectUsernames(screen, subwin, win)
 
-	elif selection == ord('3'):
-		timeWindow = specifyTimeWindow(screen, subwin, win)
+		elif selection == ord('2'):
+			dateWindow = specifyDataWindow(screen, subwin, win)
 
-	subwin.clear()
-	screen.noutrefresh()
-	win.noutrefresh()
-	subwin.noutrefresh()
-	curses.doupdate()
+		elif selection == ord('3'):
+			timeWindow = specifyTimeWindow(screen, subwin, win)
+		
+		elif selection == ord('q') or selection == ord('Q'):
+			displayMenu = False
+		
+		subwin.clear()
+		screen.noutrefresh()
+		win.noutrefresh()
+		subwin.noutrefresh()
+		curses.doupdate()
 	
-	screen.getch()
 
 try:
 	#Curses wrapper initalizes screen, etc
