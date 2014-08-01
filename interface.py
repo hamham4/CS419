@@ -17,12 +17,13 @@ def displayOptions(screen, subwin):
 	#Where the options will be located in the window
 	start_y = 0
 	start_x = 0 
-	numOptions = 4
+	numOptions = 5
 	subwin.addstr(start_y, start_x, "Select an option, then hit the return key.", curses.A_BOLD)
-	subwin.addstr(start_y + 1, start_x, "1: Add a username (at least one needed)")
+	subwin.addstr(start_y + 1, start_x, "1: Add usernames (at least one needed)")
 	subwin.addstr(start_y + 2, start_x, "2: Edit window dates (default tomorrow)")
 	subwin.addstr(start_y + 3, start_x, "3: Edit window times (default 9am - 5pm)")
-
+	subwin.addstr(start_y + 4, start_x, "4: Get scheduling recommendations")
+	
 	#Returns the number of options to help with formatting later
 	return numOptions
 
@@ -45,7 +46,7 @@ def getMenuChoice(screen, subwin, win):
 		curses.curs_set(1)
 		curses.echo()
 		x = subwin.getch()
-		if x == ord('1') or x == ord('2') or x == ord('3') or x == ord('q') or x == ord('Q'):
+		if x == ord('1') or x == ord('2') or x == ord('3') or x == ord('4') or x == ord('q') or x == ord('Q'):
 			userSelection = x
 
 		#Refresh screen (is the necessary?)
@@ -60,6 +61,27 @@ def getMenuChoice(screen, subwin, win):
 
 	#Return the user's selection
 	return userSelection
+
+def getRecommendations(screen, subwin, win, attendees):
+	start_y = 0
+	start_x = 0
+
+	if attendees == None or len(attendees) == 0:
+		#Return to options window
+		subwin.addstr(start_y, start_x, "You need to enter at least one username.", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+
+		input = subwin.getch()
+		return
+	else:
+		subwin.addstr(start_y, start_x, "The following criteria will be submitted:")
+		curses.curs_set(0)
+		input = subwin.getch()
+
+
 def getTimePart(part, screen, subwin, win, y_position):
 	curses.echo()
 	start_y = y_position
@@ -344,6 +366,9 @@ def main(screen):
 		elif selection == ord('3'):
 			timeWindow = specifyTimeWindow(screen, subwin, win)
 		
+		elif selection == ord('4'):
+			getRecommendations(screen, subwin, win, attendees)
+
 		elif selection == ord('q') or selection == ord('Q'):
 			displayMenu = False
 		
