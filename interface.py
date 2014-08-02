@@ -13,6 +13,12 @@ from datetime import date
 DateWindow = namedtuple("DateWindow", "startYear startMonth startDay endYear endMonth endDay")
 TimeWindow = namedtuple("TimeWindow", "startHour, startMin, endHour, endMin")
 
+def refreshAllScreens(screen, win, subwin):
+	screen.noutrefresh()
+	win.noutrefresh()
+	subwin.noutrefresh()
+	curses.doupdate()
+
 def displayOptions(screen, subwin):
 	#Where the options will be located in the window
 	start_y = 0
@@ -50,10 +56,7 @@ def getMenuChoice(screen, subwin, win):
 			userSelection = x
 
 		#Refresh screen (is the necessary?)
-		screen.noutrefresh()
-		win.noutrefresh()
-		subwin.noutrefresh()
-		curses.doupdate()
+		refreshAllScreens(screen, win, subwin)
 
 	#Turn off echo and cursor
 	curses.echo()
@@ -62,7 +65,7 @@ def getMenuChoice(screen, subwin, win):
 	#Return the user's selection
 	return userSelection
 
-def getRecommendations(screen, subwin, win, attendees):
+def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow):
 	start_y = 0
 	start_x = 0
 
@@ -78,9 +81,44 @@ def getRecommendations(screen, subwin, win, attendees):
 		return
 	else:
 		subwin.addstr(start_y, start_x, "The following criteria will be submitted:")
+		start_y = start_y + 1
 		curses.curs_set(0)
-		input = subwin.getch()
+		
+		#Display attendees
+		subwin.addstr(start_y, start_x, "Attendees:", curses.A_BOLD)
+		start_y = start_y + 1
 
+		for attendee in attendees:
+			subwin.addstr(start_y, start_x, attendee)
+			start_y = start_y + 1
+
+			#Refresh screen (is the necessary?)
+			refreshAllScreens(screen, win, subwin)
+
+		#Display window
+		subwin.addstr(start_y, start_x, "Event window set for:", curses.A_BOLD)
+		start_y = start_y + 1
+
+		#Retrieve values from named tuples
+		startYear, startMonth, startDay, endYear, endMonth, endDay = dayWindow
+		startHour, startMin, endHour, endMin = timeWindow
+
+		subwin.addstr(start_y, start_x, str(startYear) + "/" + str(startMonth) + "/" + str(startDay) + " - " + str(endYear) + "/" + str(endMonth) + "//" + str(endDay))
+		start_y = start_y + 1
+
+
+		subwin.addstr(start_y, start_x, startHour + ":" + startMin + " - " + endHour + ":" + endMin)
+		start_y = start_y + 2
+
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+		input = subwin.getch()
+		
+def fetchRecommendations(jsonRequest):
+	pass
+
+def convertRequestToJson():
+	pass
 
 def getTimePart(part, screen, subwin, win, y_position):
 	curses.echo()
@@ -158,10 +196,7 @@ def specifyTimeWindow(screen, subwin, win):
 	start_y = start_y + 1
 	
 	#Refresh screens
-	screen.noutrefresh()
-	win.noutrefresh()
-	subwin.noutrefresh()
-	curses.doupdate()
+	refreshAllScreens(screen, win, subwin)
 
 	#Return to options window
 	subwin.addstr(start_y, start_x, "Hit Enter to continue")
@@ -215,14 +250,11 @@ def specifyDataWindow(screen, subwin, win):
 
 	subwin.clear()
 	start_y = 0
-	subwin.addstr(start_y, start_x, "Date window " + startYear + "\\" + startMonth + "\\" + startDay + " - " + endYear + "\\" + endMonth + "\\" + endDay + " was saved.")
+	subwin.addstr(start_y, start_x, "Date window " + startYear + "/" + startMonth + "/" + startDay + " - " + endYear + "/" + endMonth + "/" + endDay + " was saved.")
 	start_y = start_y + 1
 	
 	#Refresh screens
-	screen.noutrefresh()
-	win.noutrefresh()
-	subwin.noutrefresh()
-	curses.doupdate()
+	refreshAllScreens(screen, win, subwin)
 
 	#Return to options window
 	subwin.addstr(start_y, start_x, "Hit Enter to continue")
@@ -249,10 +281,7 @@ def selectUsernames(screen, subwin, win):
 	subwin.addstr(start_y, start_x, "Enter at least one username. ", curses.A_BOLD)
 
 	#Refresh screens
-	screen.noutrefresh()
-	win.noutrefresh()
-	subwin.noutrefresh()
-	curses.doupdate()
+	refreshAllScreens(screen, win, subwin)
 
 	#Turn on cursor and echo
 	curses.echo()
@@ -295,20 +324,14 @@ def selectUsernames(screen, subwin, win):
 		start_y = start_y + 1
 
 		#Refresh screen (is the necessary?)
-		screen.noutrefresh()
-		win.noutrefresh()
-		subwin.noutrefresh()
-		curses.doupdate()
+		refreshAllScreens(screen, win, subwin)
 
 	#Return to options window
 	subwin.addstr(start_y, start_x, "Hit Enter to continue")
 	curses.curs_set(0)
 	subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
 	
-	screen.noutrefresh()
-	win.noutrefresh()
-	subwin.noutrefresh()
-	curses.doupdate()
+	refreshAllScreens(screen, win, subwin)
 
 	input = subwin.getch()
 	return attendees
@@ -367,17 +390,13 @@ def main(screen):
 			timeWindow = specifyTimeWindow(screen, subwin, win)
 		
 		elif selection == ord('4'):
-			getRecommendations(screen, subwin, win, attendees)
+			getRecommendations(screen, subwin, win, attendees, dateWindow, timeWindow)
 
 		elif selection == ord('q') or selection == ord('Q'):
 			displayMenu = False
 		
 		subwin.clear()
-		screen.noutrefresh()
-		win.noutrefresh()
-		subwin.noutrefresh()
-		curses.doupdate()
-	
+		refreshAllScreens(screen, win, subwin)
 
 try:
 	#Curses wrapper initalizes screen, etc
