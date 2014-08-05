@@ -23,15 +23,21 @@ def displayOptions(screen, subwin):
 	#Where the options will be located in the window
 	start_y = 0
 	start_x = 0 
-	numOptions = 5
 	subwin.addstr(start_y, start_x, "Select an option, then hit the return key.", curses.A_BOLD)
-	subwin.addstr(start_y + 1, start_x, "1: Add usernames (at least one needed)")
-	subwin.addstr(start_y + 2, start_x, "2: Edit window dates (default tomorrow)")
-	subwin.addstr(start_y + 3, start_x, "3: Edit window times (default 9am - 5pm)")
-	subwin.addstr(start_y + 4, start_x, "4: Get scheduling recommendations")
+	start_y = start_y + 1
+	subwin.addstr(start_y, start_x, "1: Select scheduing goal (default get open times")
+	start_y = start_y + 1
+	subwin.addstr(start_y, start_x, "2: Add usernames (at least one needed)")
+	start_y = start_y + 1
+	subwin.addstr(start_y, start_x, "3: Edit window dates (default tomorrow)")
+	start_y = start_y + 1
+	subwin.addstr(start_y, start_x, "4: Edit window times (default 9am - 5pm)")
+	start_y = start_y + 1
+	subwin.addstr(start_y, start_x, "5: Get scheduling recommendations")
+	start_y = start_y + 1
 	
 	#Returns the number of options to help with formatting later
-	return numOptions
+	return start_y
 
 def getMenuChoice(screen, subwin, win):
 	#Coordinates of where text will belocated
@@ -45,14 +51,14 @@ def getMenuChoice(screen, subwin, win):
 	while x != ord('\n'):
 
 		#Displays the menu options
-		numOptions = displayOptions(screen, subwin)
+		start_y = displayOptions(screen, subwin)
 
 		#Gets user's selection echo and curser are turned on
-		subwin.addstr(start_y + numOptions, start_x, "Selection: ")
+		subwin.addstr(start_y, start_x, "Selection: ")
 		curses.curs_set(1)
 		curses.echo()
 		x = subwin.getch()
-		if x == ord('1') or x == ord('2') or x == ord('3') or x == ord('4') or x == ord('q') or x == ord('Q'):
+		if x == ord('1') or x == ord('2') or x == ord('3') or x == ord('4') or x == ord('5') or x == ord('q') or x == ord('Q'):
 			userSelection = x
 
 		#Refresh screen (is the necessary?)
@@ -65,7 +71,7 @@ def getMenuChoice(screen, subwin, win):
 	#Return the user's selection
 	return userSelection
 
-def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow):
+def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, schedulingGoal):
 	start_y = 0
 	start_x = 0
 
@@ -84,6 +90,17 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow):
 		start_y = start_y + 1
 		curses.curs_set(0)
 		
+		#Display scheduling goal
+		subwin.addstr(start_y, start_x, "Scheduling goal:", curses.A_BOLD)
+		start_y = start_y + 1
+
+		if schedulingGoal == ("findTime"):
+			subwin.addstr(start_y, start_x, "Find a time during the window where the attedees are available")
+			start_y = start_y + 1
+		elif schedulingGoal == ("findAttendees"):
+			subwin.addstr(start_y, start_x, "Find the attendees who are available during the window")
+			start_y = start_y + 1
+
 		#Display attendees
 		subwin.addstr(start_y, start_x, "Attendees:", curses.A_BOLD)
 		start_y = start_y + 1
@@ -108,7 +125,7 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow):
 
 
 		subwin.addstr(start_y, start_x, startHour + ":" + startMin + " - " + endHour + ":" + endMin)
-		start_y = start_y + 2
+		start_y = start_y + 2 
 
 		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
 		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
@@ -156,6 +173,56 @@ def validateDate():
 
 def validateTime():
 	pass
+def getSchedulingSelection(screen, subwin, win):
+	x = None
+	userSelection = None
+
+	while x != ord('\n'):
+		x = subwin.getch()
+		if x != ord('\n'):
+			userSelection = x
+
+	return userSelection
+
+def getSchedulingGoal(screen, subwin, win):
+	userSelection = 0
+	curses.curs_set(1)
+	curses.echo()
+	#Display options until the user hits return
+	while userSelection != ord('1') and userSelection != ord('2'):
+
+		subwin.clear() 
+		start_y = 0
+		start_x = 0
+
+		#Display instructions
+		subwin.addstr(start_y, start_x, "Specify you scheduling goal.", curses.A_BOLD)
+		start_y = start_y + 1
+
+		#Scheduling choices
+		subwin.addstr(start_y, start_x, "1. Get a time when everyone is available")
+		start_y = start_y + 1
+
+		subwin.addstr(start_y, start_x, "2. Get a list of who is availabe")
+		start_y = start_y + 1
+
+		subwin.addstr(start_y, start_x, "Selection: ")
+		start_y - start_y + 1
+
+		userSelection = getSchedulingSelection(screen, subwin, win)
+		refreshAllScreens(screen, win, subwin)
+
+	#Turn off echo and cursor
+	curses.echo()
+	curses.curs_set(0)
+
+	#Return the user's selection
+	if userSelection == ord('1'):
+		return "findTime"
+	elif userSelection == ord('2'):
+		return "findAttendees"
+	else:
+		return "error"
 
 def specifyTimeWindow(screen, subwin, win):
 	#Turn on cursor and echo
@@ -344,6 +411,10 @@ def main(screen):
 	#Set default date window as tomorrow
 	dateWindow = DateWindow(date.today().year, date.today().month, date.today().day + 1, date.today().year, date.today().month, date.today().day + 1)
 	timeWindow = TimeWindow("9", "00", "17", "00")
+	
+	#Set default scheduling goals
+	schedulingGoal = "findTime"
+
 	#Define color options
 	curses.init_pair(1,curses.COLOR_RED, curses.COLOR_BLACK)
 	curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)
@@ -381,16 +452,19 @@ def main(screen):
 		selection = getMenuChoice(screen, subwin, win)
 		subwin.clear()
 		if selection == ord('1'):
-			attendees = selectUsernames(screen, subwin, win)
+			schedulingGoal = getSchedulingGoal(screen, subwin, win)
 
 		elif selection == ord('2'):
-			dateWindow = specifyDataWindow(screen, subwin, win)
+			attendees = selectUsernames(screen, subwin, win)
 
 		elif selection == ord('3'):
+			dateWindow = specifyDataWindow(screen, subwin, win)
+
+		elif selection == ord('4'):
 			timeWindow = specifyTimeWindow(screen, subwin, win)
 		
-		elif selection == ord('4'):
-			getRecommendations(screen, subwin, win, attendees, dateWindow, timeWindow)
+		elif selection == ord('5'):
+			getRecommendations(screen, subwin, win, attendees, dateWindow, timeWindow, schedulingGoal)
 
 		elif selection == ord('q') or selection == ord('Q'):
 			displayMenu = False
