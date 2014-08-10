@@ -25,7 +25,7 @@ def displayOptions(screen, subwin):
 	start_x = 0 
 	subwin.addstr(start_y, start_x, "Select an option, then hit the return key.", curses.A_BOLD)
 	start_y = start_y + 1
-	subwin.addstr(start_y, start_x, "1: Select scheduing goal (default get open times")
+	subwin.addstr(start_y, start_x, "1: Select scheduling goal (default get open times)")
 	start_y = start_y + 1
 	subwin.addstr(start_y, start_x, "2: Add usernames (at least one needed)")
 	start_y = start_y + 1
@@ -95,7 +95,7 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		start_y = start_y + 1
 
 		if schedulingGoal == ("findTime"):
-			subwin.addstr(start_y, start_x, "Find a time during the window where the attedees are available")
+			subwin.addstr(start_y, start_x, "Find a time during the window where the attendees are available")
 			start_y = start_y + 1
 		elif schedulingGoal == ("findAttendees"):
 			subwin.addstr(start_y, start_x, "Find the attendees who are available during the window")
@@ -120,7 +120,7 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		startYear, startMonth, startDay, endYear, endMonth, endDay = dayWindow
 		startHour, startMin, endHour, endMin = timeWindow
 
-		subwin.addstr(start_y, start_x, str(startYear) + "/" + str(startMonth) + "/" + str(startDay) + " - " + str(endYear) + "/" + str(endMonth) + "//" + str(endDay))
+		subwin.addstr(start_y, start_x, str(startYear) + "/" + str(startMonth) + "/" + str(startDay) + " - " + str(endYear) + "/" + str(endMonth) + "/" + str(endDay))
 		start_y = start_y + 1
 
 
@@ -173,6 +173,7 @@ def validateDate():
 
 def validateTime():
 	pass
+
 def getSchedulingSelection(screen, subwin, win):
 	x = None
 	userSelection = None
