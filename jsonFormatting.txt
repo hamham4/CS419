@@ -1,0 +1,32 @@
+
+== REQUEST FORMAT IN JSON ==
+
+requestType = findTime OR findAttendees
+startYear = xxxx
+endYear = xxxx
+startMonth = xx
+EndMonth = xx
+startDay = xx
+endDay = xx
+startTime = xx:xx (24 hr)
+endTime = xx:xx (24 hr)
+
+
+{"request": {
+  "type": "findTime",
+  "startYear": "2014",
+  "endYear": "2014",
+  "startMonth": "08",
+  "endMonth": "08",
+  "startDay": "21",
+  "endDay": "21",
+  "startTime": "09:30",
+  "endTime": "13:30",
+  "attendees": {
+    "attendee": [
+      {"username": "thorups"},
+      {"username": "siplec"},
+      {"username": "busherir"}
+    ]
+  }
+}}
