@@ -80,10 +80,8 @@ for k in range(len(catData)):
             if cnt == 7:
                 sdate += data[i]
             if cnt == 8:
-                """if data[i].isdigit() == False:
+                if data[i].isdigit() == False and data[i] != '/':
                     usr = ""
-                    i = i-1
-                    edate = "N/A"
                     n = 0
                     for j in range(len(last)):
                         if n==7:
@@ -110,7 +108,7 @@ for k in range(len(catData)):
                         if days[n] == "U":
                             sun = "True"
                 
-                    print(usr,",", last,",", first,",", sat,",", sun,",", mon,",", tues,",", wed,",", thur,",", fri,",", stime,",", etime,",", sdate,",", edate)
+                    print(usr,",", last,",", first,",", sat,",", sun,",", mon,",", tues,",", wed,",", thur,",", fri,",", stime,",", etime,",", sdate,",", "N/A")
                 
                     days = ""
                     stime = ""
@@ -118,8 +116,8 @@ for k in range(len(catData)):
                     sdate = ""
                     edate = ""
                     days += data[i]
-                    cnt = 8
-                    continue"""
+                    cnt = 4
+                    continue
                 edate += data[i]
             if cnt ==9:
                 usr = ""
@@ -186,5 +184,7 @@ for k in range(len(catData)):
                 sat = "True"
             if days[n] == "U":
                 sun = "True"
-                            
+		
+        if edate == "" and cnt == 7:
+            edate = "N/A"
         print(usr,",", last,",", first,",", sat,",", sun,",", mon,",", tues,",", wed,",", thur,",", fri,",", stime,",", etime,",", sdate,",", edate)

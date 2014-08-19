@@ -14,7 +14,7 @@ burrowsm , Burrows , M , False , False , False , True , True , True , False , 10
 shellm , Shell , M , False , False , True , True , True , True , True , 1200 , 1350 , 6/23/14 , 8/1/14
 pilollak , Pilolla , K , False , False , True , True , True , True , False , 1000 , 1150 , 6/23/14 , 7/18/14
 pilollak , Pilolla , K , False , False , True , True , True , True , False , 1300 , 1450 , 6/23/14 , 7/18/14
-scheuert , Scheuermann , T , False , False , False , False , False , False , True , 0800 , 1650 , 6/27/14 , 
+scheuert , Scheuermann , T , False , False , False , False , False , False , True , 0800 , 1650 , 6/27/14 , N/A
 herreraf , Herrera , F , False , False , True , True , True , True , True , 0800 , 1650 , 6/23/14 , 6/27/14
 johnsone , Johnson , E , False , False , True , True , True , True , True , 0800 , 1650 , 6/23/14 , 6/27/14
 mccullob , Mc Cullough , B , False , False , True , True , True , True , False , 0900 , 1150 , 6/23/14 , 7/18/14
@@ -116,14 +116,14 @@ elliottk , Elliott , K , False , False , True , False , True , False , False , 1
 bethelj , Bethel , J , False , False , True , True , True , True , False , 1400 , 1550 , 7/21/14 , 8/15/14
 maxwelle , Maxwell , E , False , False , False , True , False , True , False , 1000 , 1220 , 6/23/14 , 8/15/14
 veltria , Veltri , A , False , False , False , False , False , True , True , 0830 , 1750 , 7/10/14 , 7/11/14
-veltria , Veltri , A , False , False , False , False , False , True , False , 0830 , 1750 , 7/17/14 , F
-veltria , Veltri , A , False , False , False , False , False , False , False , 1750 , 7/18/14 ,  , 
+veltria , Veltri , A , False , False , False , False , False , True , False , 0830 , 1750 , 7/17/14 , N/A
+veltria , Veltri , A , False , False , False , False , False , False , True , 0830 , 1750 , 7/18/14 , N/A
 chic , Chi , C , True , False , False , False , False , False , True , 0830 , 1620 , 6/20/14 , 6/21/14
 chic , Chi , C , True , False , False , False , False , False , True , 0830 , 1620 , 6/27/14 , 6/28/14
 chic , Chi , C , False , False , True , True , True , True , False , 0830 , 1620 , 6/16/14 , 6/20/14
 veltria , Veltri , A , False , False , False , False , False , True , True , 0830 , 1750 , 7/10/14 , 7/11/14
-veltria , Veltri , A , False , False , False , False , False , True , False , 0830 , 1750 , 7/17/14 , F
-veltria , Veltri , A , False , False , False , False , False , False , False , 1750 , 7/18/14 ,  , 
+veltria , Veltri , A , False , False , False , False , False , True , False , 0830 , 1750 , 7/17/14 , N/A
+veltria , Veltri , A , False , False , False , False , False , False , True , 0830 , 1750 , 7/18/14 , N/A
 khannas , Khanna , S , False , False , True , True , True , True , True , 0830 , 1620 , 6/16/14 , 6/20/14
 chic , Chi , C , False , False , True , True , True , True , False , 0830 , 1620 , 6/16/14 , 6/20/14
 selkerj , Selker , J , False , False , False , False , True , True , True , 0700 , 1950 , 7/30/14 , 8/1/14
@@ -293,7 +293,7 @@ walkerj , Walker , J , False , False , True , True , True , True , True , 1301 ,
 walkerj , Walker , J , False , False , True , True , True , True , True , 1302 , 1350 , 7/21/14 , 8/15/14
 walkerj , Walker , J , False , False , True , False , False , True , False , 0900 , 1150 , 8/18/14 , 9/4/14
 walkerj , Walker , J , False , False , True , False , False , True , False , 1300 , 1550 , 8/18/14 , 9/4/14
-walkerj , Walker , J , False , False , False , False , False , False , True , 0900 , 1050 , 9/5/14 , 
+walkerj , Walker , J , False , False , False , False , False , False , True , 0900 , 1050 , 9/5/14 , N/A
 webere , Weber , E , False , False , True , False , True , False , False , 1000 , 1150 , 6/23/14 , 7/18/14
 aaronw , Aaron , W , False , False , True , False , True , False , False , 0800 , 0950 , 6/30/14 , 7/17/14
 aaronw , Aaron , W , False , False , False , True , False , True , False , 0800 , 1050 , 6/30/14 , 7/17/14
@@ -317,6 +317,8 @@ crawfors , Crawford , S , False , False , True , True , True , True , True , 090
 deboodtt , Deboodt , T , False , False , True , True , True , False , False , 0900 , 1020 , 6/23/14 , 8/15/14
 campanam , Campana , M , False , False , True , True , True , True , False , 0800 , 0950 , 7/21/14 , 8/15/14
 cassidyj , Cassidy , J , False , False , True , True , True , True , False , 0900 , 1650 , 8/18/14 , 8/21/14
+arrast , Arras , T , False , False , False , False , True , False , False , 1100 , 1350 , 6/23/14 , 8/15/14
+arrast , Arras , T , False , False , False , False , True , False , False , 1100 , 1350 , 6/23/14 , 8/15/14
 nakamurf , Nakamura , F , False , False , True , True , True , True , True , 0900 , 1050 , 6/23/14 , 7/18/14
 schwarta , Schwartz , A , False , False , True , True , True , True , True , 1000 , 1150 , 6/23/14 , 7/18/14
 woodsm , Woods , M , False , False , True , True , True , True , True , 1000 , 1150 , 7/21/14 , 8/15/14
@@ -471,20 +473,20 @@ fennelld , Fennell , D , False , False , True , True , True , True , False , 100
 katzt , Katz , T , False , False , True , True , True , True , False , 1000 , 1150 , 6/23/14 , 7/18/14
 rodgerss , Rodgers , S , False , False , True , True , True , True , False , 1300 , 1450 , 6/23/14 , 7/18/14
 connerr , Conner , R , False , False , True , True , True , True , False , 1000 , 1150 , 7/21/14 , 8/15/14
-burtonv , Burton , V , False , True , False , False , False , False , False , 1800 , 1950 , 8/17/14 , MTWR
-burtonv , Burton , V , False , False , False , False , False , False , False , 1550 , 8/18/14 , 8/21/14 , MTWR
-burtonv , Burton , V , False , False , False , False , False , False , False , 2050 , 8/18/14 , 8/21/14 , F
-burtonv , Burton , V , False , False , False , False , False , False , False , 1450 , 8/22/14 ,  , 
+burtonv , Burton , V , False , True , False , False , False , False , False , 1800 , 1950 , 8/17/14 , N/A
+burtonv , Burton , V , False , False , True , True , True , True , False , 0830 , 1550 , 8/18/14 , 8/21/14
+burtonv , Burton , V , False , False , True , True , True , True , False , 1900 , 2050 , 8/18/14 , 8/21/14
+burtonv , Burton , V , False , False , False , False , False , False , True , 0830 , 1450 , 8/22/14 , N/A
 lewisj , Lewis , J , False , False , False , True , False , True , False , 1300 , 1450 , 6/23/14 , 8/15/14
 lewisj , Lewis , J , False , False , False , True , False , False , False , 1900 , 2250 , 6/23/14 , 8/15/14
 lewisj , Lewis , J , False , False , False , True , False , True , False , 1300 , 1450 , 6/23/14 , 8/15/14
 lewisj , Lewis , J , False , False , False , True , False , False , False , 1900 , 2250 , 6/23/14 , 8/15/14
 reesed , Reese , D , False , False , True , False , False , False , False , 1000 , 1150 , 6/23/14 , 7/18/14
 reesed , Reese , D , False , False , False , False , True , False , False , 1000 , 1050 , 6/23/14 , 7/18/14
-mortensj , Mortenson , J , False , False , False , False , False , False , True , 1700 , 2050 , 6/20/14 , S
-mortensj , Mortenson , J , False , False , False , False , False , False , False , 1150 , 6/21/14 , S , 1300
-mortensj , Mortenson , J , False , False , False , False , False , False , False , 6/21/14 , U , 0900 , 1650
-mortensj , Mortenson , J , False , False , False , False , False , False , False ,  ,  ,  , 
+mortensj , Mortenson , J , False , False , False , False , False , False , True , 1700 , 2050 , 6/20/14 , N/A
+mortensj , Mortenson , J , True , False , False , False , False , False , False , 0900 , 1150 , 6/21/14 , N/A
+mortensj , Mortenson , J , True , False , False , False , False , False , False , 1300 , 1650 , 6/21/14 , N/A
+mortensj , Mortenson , J , False , True , False , False , False , False , False , 0900 , 1650 , 6/22/14 , N/A
 macdonas , MacDonald , S , False , False , True , True , True , True , False , 1300 , 1450 , 6/23/14 , 7/18/14
 macdonas , MacDonald , S , False , False , True , True , True , True , False , 1300 , 1450 , 7/21/14 , 8/15/14
 bigal , Biga , L , False , False , True , True , True , True , True , 1300 , 1450 , 8/18/14 , 9/5/14
@@ -492,12 +494,12 @@ thompson , Thompson , N , False , False , True , False , True , True , False , 0
 bentze , Bentz , E , False , False , True , False , True , True , False , 0900 , 1150 , 7/21/14 , 8/15/14
 kandak , Kanda , K , False , False , False , True , True , True , False , 0900 , 1150 , 8/18/14 , 9/5/14
 taylorb , Taylor , B , False , False , True , True , True , True , True , 1300 , 1450 , 8/18/14 , 9/5/14
-quickd , Quick , D , False , False , True , False , False , False , False , 1900 , 2050 , 6/23/14 , R
-quickd , Quick , D , False , False , False , False , False , False , False , 2020 , 7/24/14 , 9/5/14 , F
-quickd , Quick , D , False , False , False , False , False , False , False , 1220 , 7/24/14 , 9/5/14 , 
-quickd , Quick , D , False , False , True , False , False , False , False , 1900 , 2050 , 6/23/14 , R
-quickd , Quick , D , False , False , False , False , False , False , False , 2020 , 7/24/14 , 9/5/14 , F
-quickd , Quick , D , False , False , False , False , False , False , False , 1220 , 7/24/14 , 9/5/14 , 
+quickd , Quick , D , False , False , True , False , False , False , False , 1900 , 2050 , 6/23/14 , N/A
+quickd , Quick , D , False , False , False , False , False , True , False , 1700 , 2020 , 7/24/14 , 9/5/14
+quickd , Quick , D , False , False , False , False , False , False , True , 0900 , 1220 , 7/24/14 , 9/5/14
+quickd , Quick , D , False , False , True , False , False , False , False , 1900 , 2050 , 6/23/14 , N/A
+quickd , Quick , D , False , False , False , False , False , True , False , 1700 , 2020 , 7/24/14 , 9/5/14
+quickd , Quick , D , False , False , False , False , False , False , True , 0900 , 1220 , 7/24/14 , 9/5/14
 faltesed , Faltesek , D , False , False , True , True , True , True , True , 1000 , 1150 , 6/23/14 , 7/18/14
 johnf , John , F , False , False , True , False , True , False , True , 1300 , 1420 , 6/23/14 , 8/15/14
 logesw , Loges , W , False , False , True , True , True , True , True , 0900 , 1550 , 6/16/14 , 6/20/14
