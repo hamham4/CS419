@@ -43,6 +43,10 @@ class getHandler(webapp2.RequestHandler):
             if r == 1:
                 flag = 1
             
+            n = day.split('/')
+            m = int( n[0] )
+            d2 = int( n[1] )
+            
             q = EntriesDB.all()
             q.filter( 'user =', usr )
             if flag == 0:
@@ -59,10 +63,20 @@ class getHandler(webapp2.RequestHandler):
             
             self.response.write( '<table id="db_table">' )
             for e in q.run():
+                if flag == 1:
                     line = e.sTime + ' ' + e.eTime
                     self.response.write( '<tr>' )
                     self.response.write( '<td>' + line + '</td>' )
                     self.response.write( '</tr>' )
+                else:
+                    sd = e.sDate.split('/')
+                    ed = e.eDate.split('/')
+                    if (m == int(sd[0]) and d2 >= int(sd[1])) or (m == int(ed[0]) and d2 <= int(ed[1])):
+                        line = e.sTime + ' ' + e.eTime
+                        self.response.write( '<tr>' )
+                        self.response.write( '<td>' + line + '</td>' )
+                        self.response.write( '</tr>' )
+                    
         self.response.write( '</table></body></html>' )
 
 def format_date( date ):
