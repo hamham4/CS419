@@ -1,3 +1,5 @@
+# Sara Thorup
+# CS 419 - Final Project: Group 4
 #The purpose of this program is to return a list of times that an individual is free
 #Params: A list of named tuples of busy times
 from collections import namedtuple

@@ -1,3 +1,6 @@
+# Sara Thorup
+# CS 419 - Final Project: Group 4
+
 import json
 
 def main():
