@@ -134,8 +134,24 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 def fetchRecommendations(jsonRequest):
 	pass
 
-def convertRequestToJson():
-	pass
+#Puts the users request into json format
+def convertRequestToJson(attendees, dayWindow, timeWindow, schedulingGoal):
+	#Retrieve values from named tuples
+	startYear, startMonth, startDay, endYear, endMonth, endDay = dayWindow
+	startHour, startMin, endHour, endMin = timeWindow
+	startTime = str(startHour) + ":" + str(startMin)
+	endTime = str(endHour) + ":" + str(endMin)
+
+	#creates a string of the request parameters in json format
+	jsonRequest = '{"request": {"type": "' + requestType + '","startYear": "' + str(startYear) + '","endYear": "' + str(endYear) + '","startMonth": "' + startMonth + '","endMonth": "' + endMonth + '","startDay": "' + startDay + '","endDay": "' + endDay + '","startTime": "' + startTime + '","endTime": "' + endTime  + '","attendees": {"attendee": ['
+
+	for attendee in attendees:
+		jsonRequest = jsonRequest + '"{username": "' + attendee + '"}'
+
+	jsonRequest = jsonRequest + ']}}}'
+
+	return jsonRequest
+
 
 def getTimePart(part, screen, subwin, win, y_position):
 	curses.echo()
