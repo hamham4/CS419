@@ -8,10 +8,12 @@
 import curses
 from collections import namedtuple
 from datetime import date
-
+import httplib
+import urllib
 
 DateWindow = namedtuple("DateWindow", "startYear startMonth startDay endYear endMonth endDay")
 TimeWindow = namedtuple("TimeWindow", "startHour, startMin, endHour, endMin")
+HOST_URL = "putSOMETHINGHERE"
 
 def refreshAllScreens(screen, win, subwin):
 	screen.noutrefresh()
@@ -130,9 +132,19 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
 		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
 		input = subwin.getch()
-		
+
+def sendRequest(jsonRequest):
+	params = urllib.urlencode({'request': jsonRequest})
+	headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
+	conn = httplib.HTTPConnection(HOST_URL)
+	conn.request("POST", "", params, headers)
+	response = conn.getresponse()
+	#https://docs.python.org/2/library/httplib.html
+	return response
+	
 def fetchRecommendations(jsonRequest):
-	pass
+	recommendations = sendRequest(jsonRequest)
+
 
 #Puts the users request into json format
 def convertRequestToJson(attendees, dayWindow, timeWindow, schedulingGoal):
