@@ -1,9 +1,32 @@
+# Chris Siple
+# CS 419 - Final Project: Group 4
+# The purpose of this program is to return a list of times that an individual is busy by querying 
+# the course catalog data stored in a GAE datastore via a GAE web application
+# Params: 4 digit year, 2 digit month, 2 digit day, and username
+# Use: import busy_times_db and call busy_times_db( day, month, year, usr )
+# Returns: list of named tuples which represent busy blocks of time for a username on a specific date
+
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
 from collections import namedtuple
 
 BASE_URL = 'http://parser-cs419.appspot.com/get'
 BusyBlock = namedtuple("BusyBlock", "year, month, day, startTime endTime")
+
+
+def busy_times_db( day, month, year, usr ):
+        date = str( year ) + '-' + str( month ) + '-' + str( day )
+        
+	ADD_URL = '?username=' + usr + '&date=' + date + '&submit=Submit'
+	URL = BASE_URL + ADD_URL
+	
+	busyTimes = get_data( URL, date )
+	if busyTimes == 0:
+		return 0
+	#for window in range( len( busyTimes ) ):
+		#print( busyTimes[window] )
+	return busyTimes
+
 
 def make_soup( url ):
 	html = urlopen(url).read()
@@ -27,16 +50,6 @@ def get_data( url, date ):
 			busyTimes.append(busyBlock)
 		return busyTimes
 	return 0
-	
-def busy_times_db( usr, date ):
-	ADD_URL = '?username=' + usr + '&date=' + date + '&submit=Submit'
-	URL = BASE_URL + ADD_URL
-	busyTimes = get_data( URL, date )
-	if busyTimes == 0:
-		return 0
-	#for window in range( len( busyTimes ) ):
-		#print( busyTimes[window] )
-	return busyTimes
 
 		
 def check_date( date ):
@@ -53,7 +66,3 @@ def check_date( date ):
 		return 0
 	else:
 		return 1
-
-usr = 'driskilq'
-date = '2014-06-17'
-busy_times_db( usr, date )
