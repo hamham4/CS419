@@ -44,7 +44,7 @@ def busy_times_db( day, month, year, usr ):
 
 
 def make_soup( url ):
-	html = urlfetch.fetch(url)
+	html = urlfetch.fetch(url).content
 	return bs4.BeautifulSoup(html,"lxml")
 
 def get_data( url, date ):
