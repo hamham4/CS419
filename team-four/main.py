@@ -15,50 +15,20 @@
 # limitations under the License.
 #
 import webapp2
-import json
+import jsonManipulator
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
         self.response.write('Hello world!')
 
 class SubmissionHandler(webapp2.RequestHandler):
+
 	def post(self):
 		#Get request from Post
 		jsonParameters = self.request.get('request', self)
 
 		#Parse out parameters from json
-		requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees = getParsedParameters(jsonParameters)
-
-		#Display parameters
-		self.response.write(requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees)
-
-	#Takes the scheduling request in json format and returns parsed options
-	def getParsedParameters(jsonParameters):
-		try:
-			decodedJson = json.loads(jsonRequest)
-			requestType = decodedJson["request"]["type"]
-			startYear = decodedJson["request"]["startYear"]
-			endYear = decodedJson["request"]["endYear"]
-			startMonth = decodedJson["request"]["startMonth"]
-			endMonth = decodedJson["request"]["endMonth"]
-			startDay = decodedJson["request"]["startDay"]
-			endDay = decodedJson["request"]["endDay"]
-			startTime = decodedJson["request"]["startTime"]
-			endTime = decodedJson["request"]["endTime"]
-			attendees = list()
-
-			numAttendees = len(decodedJson["request"]["attendees"]["attendee"])
-
-			#Add all of the attendees
-			for i in range(0, numAttendees):
-				attendees.append(decodedJson["request"]["attendees"]["attendee"][i]["username"])
-
-			return requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees
-
-		except (ValueError, KeyError, TypeError):
-			print "JSON format error"
-
-
+		requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees = jsonManipulator.getParsedParameters(jsonParameters)
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
     ('/submit', SubmissionHandler)
