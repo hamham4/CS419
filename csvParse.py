@@ -1,3 +1,12 @@
+# Author: Chris Siple
+# Purpose: CS 419 Final Project
+# Description: This program uses beautiful soup and lxml to scrape course catalog
+#              data and output comma separated values (.csv) file
+# This is a standalone program that can be reused by updating the URL or could be called
+# periodically at the start of each semester to re-parse current term data
+# Instructions: run as csvParse.py > <filename.csv> , filename.csv can then be used to
+#               to upload course catalog data to datastore via GAE web application at
+#               parseer-cs419.appspot.com
 
 from bs4 import BeautifulSoup
 from urllib.request import urlopen
