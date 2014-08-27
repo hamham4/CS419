@@ -19,6 +19,9 @@ from collections import namedtuple
 import jsonManipulator 
 import busy_times_db
 import busyToFreeTimeConverter
+import logging
+
+MINS_PER_DAY = 1440
 
 BusyBlock = namedtuple("BusyBlock", "year, month, day, startTime endTime")
 FreeBlock = namedtuple("FreeBlock", "year, month, day, startTime, endTime")
@@ -45,42 +48,143 @@ class SubmissionHandler(webapp2.RequestHandler):
 				for month in range(int(startMonth), int(endMonth) + 1):
 					for day in range(int(startDay), int(endDay) + 1):
 						
-						busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
-						#busyCalendarTimesList = blah blah blah
+						#busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
+						busyTeachingTimesList = [BusyBlock(year='2014', month='06', day='17', startTime=u'0900', endTime=u'1100'), BusyBlock(year='2014', month='06', day='17', startTime=u'1300', endTime=u'1550'), BusyBlock(year='2014', month='06', day='17', startTime=u'1700', endTime=u'2050')]
+						##DEMO##
+						busyCalendarTimesList = [BusyBlock(year='2014', month='06', day='17', startTime=u'0900', endTime=u'1100'), BusyBlock(year='2014', month='06', day='17', startTime=u'1300', endTime=u'1550'), BusyBlock(year='2014', month='06', day='17', startTime=u'1700', endTime=u'2050')]
 
 						#Convert the busy teaching times to free times
-						freeTeachingTimesList = SubmissionHandler.convertToFreeTimeList(busyTeachingTimesList, year, month, day)
+						freeTeachingTimesList = SubmissionHandler.convertToFreeTimes(busyTeachingTimesList, year, month, day)
+
+						#Convert the busy calendar times to free times
+						freeCalendarTimesList = SubmissionHandler.convertToFreeTimes(busyCalendarTimesList, year, month, day)
 						
-						#Get a list of free times from a list of free times and a list of busy times
-						combinedFreeTimes = SubmissionHandler.mergeBusyandFree(busyCalendarTimesList, freeTeachingTimesList)
+						#Get a list of the combined free times
+						combinedFreeTimes = SubmissionHandler.mergeFreeTimes(freeTeachingTimesList, freeCalendarTimesList, year, month, day)
 
 						freeBlocksByDay.append(combinedFreeTimes)
-						self.response.write(busyTeachingTimesList)
-						self.response.write(freeTeachingTimesList)
+
+
+						# logging.info("FREE TEACHING TIMES", freeTeachingTimesList)
+						# logging.info("FREE CALENDAR TIMES", freeCalendarTimesList)
+						# logging.info("COMBINED FREE TIMES", combinedFreeTimes)
+						logging.info("combined free times")
+						logging.info(combinedFreeTimes)
+
 
 			allFreeTimes[attendee] = freeBlocksByDay
 	@staticmethod
-	def convertToFreeTimes(busyTimeList, year, month, day):
-		if len(busyTeachingTimesList) == 0:
-			freeTeachingTimesList = list()
+	def convertToFreeTimes(busyTimesList, year, month, day):
+		if len(busyTimesList) == 0:
+			freeTimesList = list()
 			freeBlock = FreeBlock(year, month, day, "0000", "2359")
-			freeTeachingTimesList.append(freeBlock)
+			freeTimesList.append(freeBlock)
 		else:
-			freeTeachingTimesList = busyToFreeTimeConverter.getFreeTimesList(busyTeachingTimesList)
+			freeTimesList = busyToFreeTimeConverter.getFreeTimesList(busyTimesList)
 
-		return freeTeachingTimesList
+		return freeTimesList
 
 	@staticmethod
-	def mergeBusyandFree(busyTimesList, freeTimesList):
-		#If there are no busy times, then all times are free
-		combinedBusyTimes = list()
-		if len(busyTimesList) == 0:
-			combinedFreeTimes = freeTimesList
-		else: 
-			for busyWindow in busyTimesList:
-				pass
+	def mergeFreeTimes(freeTimeListA, freeTimeListB, year, month, day):
+
+		#Takes time as string and returns mins in int
+		def timeToMins(time):
+			hour = int(time) / 100
+			length = len(time)
+			mins = int(time[(length - 2) : length])
+
+			return (60 * hour + mins)
+
+
+		#Takes mins as int and returns 24 hr time as string hhmm
+		def minsToTime(numMins):
+			hour = numMins / 60
+			str_hour = str(hour)
+			if len(str_hour) < 2:
+				str_hour = "0" + str_hour
+			
+			mins = numMins % 60
+			str_mins = str(mins)
+			if len(str_mins) < 2:
+				str_mins = "0" + str_mins
+
+			return str_hour + str_mins
+
+		def markTimeAsFree(freeTimeList):
+			#Create an array indicating no free time
+			timeArray = [0] * MINS_PER_DAY
+
+			#For each free time window, mark the time array as free
+			for freeTime in freeTimeList:
+				year, month, day, startTime, endTime = freeTime
+				startMins = timeToMins(startTime)
+				endMins = timeToMins(endTime)
+				for i in range(startMins, endMins + 1):
+					timeArray[i] = 1
+
+			return timeArray
+
+		def combineFreeTimeArrays(timeArrayA, timeArrayB, year, month, day):
+			recordingFreeTime = False
+			startTime = None
+			endTime = None
+			combinedFreeTimes = list()
+
+			for minute in range(0, MINS_PER_DAY):
+				logging.info("xxxxxxx")
+				logging.info(recordingFreeTime)
+				logging.info(minute)
+
+				#If both arrays share a free time, then set as start time, if a start time has not already been determined
+				if timeArrayA[minute] == 1 and timeArrayB[minute] == 1:
+					if recordingFreeTime == False:
+						recordingFreeTime = True
+						startTime = minsToTime(minute)
+						logging.info("start time")
+						logging.info(startTime)
+
+				else:
+					if recordingFreeTime == True:
+						recordingFreeTime = False
+						endTime = minsToTime(minute - 1)
+						logging.info("endTime time")
+						logging.info(endTime)
+
+				#Create a time Free time block and add to the array
+				if startTime != None and endTime != None:
+					sharedFreeTime = FreeBlock(year, month, day, startTime, endTime)
+					combinedFreeTimes.append(sharedFreeTime)
+					startTime = None
+					endTime = None
+
+
+			#If the end time was the nd of the day
+			if startTime != None and endTime == None:
+				endTime = "2459"
+				sharedFreeTime = FreeBlock(year, month, day, startTime, endTime)
+				combinedFreeTimes.append(sharedFreeTime)
+
+			return combinedFreeTimes
+				
+		timeArrayA = markTimeAsFree(freeTimeListA)
+		timeArrayB = markTimeAsFree(freeTimeListB)
+		logging.info("array a")
+		logging.info(timeArrayA)
+		logging.info("array b")
+		logging.info(timeArrayB)
+
+
+		return combineFreeTimeArrays(timeArrayA, timeArrayB, year, month, day)
+
 		
-		return combinedFreeTimes
+
+		
+
+		
+
+
+
+
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
