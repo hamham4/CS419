@@ -10,6 +10,7 @@ import bs4
 #from urllib.request import urlopen changed to urlfetch
 from google.appengine.api import urlfetch  
 from collections import namedtuple
+from collections import OrderedDict
 
 
 BASE_URL = 'http://parser-cs419.appspot.com/get'
