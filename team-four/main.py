@@ -34,28 +34,53 @@ class SubmissionHandler(webapp2.RequestHandler):
 		#Parse out parameters from json
 		requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees = jsonManipulator.getParsedParameters(jsonParameters)
  
-		#TEST TEST#
-		self.response.write(busy_times_db.busy_times_db("17", "6", "2014", "driskilq"))
+		allFreeTimes = SubmissionHandler.getAllFreeTimes(attendees, startYear, endYear, startMonth, endMonth, startDay, endDay)
 
-
-
-		# for attendee in attendees:
-		# 	for year in range(int(startYear), int(endYear) + 1):
-		# 		for month in range(int(startMonth), int(endMonth) + 1):
-		# 			for day in range(int(startDay), int(endDay) + 1):
+	@staticmethod
+	def getAllFreeTimes(attendees, startYear, endYear, startMonth, endMonth, startDay, endDay):
+		allFreeTimes = dict()
+		for attendee in attendees:
+			freeBlocksByDay = list()
+			for year in range(int(startYear), int(endYear) + 1):
+				for month in range(int(startMonth), int(endMonth) + 1):
+					for day in range(int(startDay), int(endDay) + 1):
 						
-		# 				busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
-		# 				# if len(busyTeachingTimesList) == 0:
-		# 				# 	freeTeachingTimesList = list()
-		# 				# 	freeBlock = FreeBlock(year, month, day, "0000", "2359")
-		# 				# 	freeTeachingTimesList.append(freeBlock)
-		# 				# else:
-		# 				# 	freeTeachingTimesList = busyToFreeTimeConverter.getFreeTimesList(busyTeachingTimesList)
-		# 				#busyCalendarTime = blahblabhblajbhlbla
+						busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
+						#busyCalendarTimesList = blah blah blah
 
-		# 				self.response.write(busyTeachingTimesList)
-		# 				#self.response.write(freeTeachingTimesList)
+						#Convert the busy teaching times to free times
+						freeTeachingTimesList = SubmissionHandler.convertToFreeTimeList(busyTeachingTimesList, year, month, day)
+						
+						#Get a list of free times from a list of free times and a list of busy times
+						combinedFreeTimes = SubmissionHandler.mergeBusyandFree(busyCalendarTimesList, freeTeachingTimesList)
 
+						freeBlocksByDay.append(combinedFreeTimes)
+						self.response.write(busyTeachingTimesList)
+						self.response.write(freeTeachingTimesList)
+
+			allFreeTimes[attendee] = freeBlocksByDay
+	@staticmethod
+	def convertToFreeTimes(busyTimeList, year, month, day):
+		if len(busyTeachingTimesList) == 0:
+			freeTeachingTimesList = list()
+			freeBlock = FreeBlock(year, month, day, "0000", "2359")
+			freeTeachingTimesList.append(freeBlock)
+		else:
+			freeTeachingTimesList = busyToFreeTimeConverter.getFreeTimesList(busyTeachingTimesList)
+
+		return freeTeachingTimesList
+
+	@staticmethod
+	def mergeBusyandFree(busyTimesList, freeTimesList):
+		#If there are no busy times, then all times are free
+		combinedBusyTimes = list()
+		if len(busyTimesList) == 0:
+			combinedFreeTimes = freeTimesList
+		else: 
+			for busyWindow in busyTimesList:
+				pass
+		
+		return combinedFreeTimes
 
 app = webapp2.WSGIApplication([
     ('/', MainHandler),
