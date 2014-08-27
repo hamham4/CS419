@@ -40,7 +40,8 @@ def busy_times_db( day, month, year, usr ):
 		return 0
 	#for window in range( len( busyTimes ) ):
 		#print( busyTimes[window] )
-	return busyTimes
+	uniqueBusyTimes = list(OrderedDict.fromkeys(busyTimes))
+	return uniqueBusyTimes
 
 
 def make_soup( url ):
