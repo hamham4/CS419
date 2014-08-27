@@ -51,7 +51,7 @@ class SubmissionHandler(webapp2.RequestHandler):
 						#busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
 						busyTeachingTimesList = [BusyBlock(year='2014', month='06', day='17', startTime=u'0900', endTime=u'1100'), BusyBlock(year='2014', month='06', day='17', startTime=u'1300', endTime=u'1550'), BusyBlock(year='2014', month='06', day='17', startTime=u'1700', endTime=u'2050')]
 						##DEMO##
-						busyCalendarTimesList = [BusyBlock(year='2014', month='06', day='17', startTime=u'0900', endTime=u'1100'), BusyBlock(year='2014', month='06', day='17', startTime=u'1300', endTime=u'1550'), BusyBlock(year='2014', month='06', day='17', startTime=u'1700', endTime=u'2050')]
+						busyCalendarTimesList = [BusyBlock(year='2014', month='06', day='17', startTime=u'0000', endTime=u'1200'), BusyBlock(year='2014', month='06', day='17', startTime=u'1300', endTime=u'1900')]
 
 						#Convert the busy teaching times to free times
 						freeTeachingTimesList = SubmissionHandler.convertToFreeTimes(busyTeachingTimesList, year, month, day)
@@ -64,15 +64,12 @@ class SubmissionHandler(webapp2.RequestHandler):
 
 						freeBlocksByDay.append(combinedFreeTimes)
 
-
-						# logging.info("FREE TEACHING TIMES", freeTeachingTimesList)
-						# logging.info("FREE CALENDAR TIMES", freeCalendarTimesList)
-						# logging.info("COMBINED FREE TIMES", combinedFreeTimes)
 						logging.info("combined free times")
 						logging.info(combinedFreeTimes)
 
 
 			allFreeTimes[attendee] = freeBlocksByDay
+		return allFreeTimes
 	@staticmethod
 	def convertToFreeTimes(busyTimesList, year, month, day):
 		if len(busyTimesList) == 0:
@@ -84,6 +81,10 @@ class SubmissionHandler(webapp2.RequestHandler):
 
 		return freeTimesList
 
+	#takes in two lists of free time named tuples for a day. 
+	#for each list it creates an array to hold all of the minutes in the day
+	#the array vaues are marked true if the person is free at that minute
+	#the arrays are compared. where an element is true in both arrays, we know that the people are free at the same time
 	@staticmethod
 	def mergeFreeTimes(freeTimeListA, freeTimeListB, year, month, day):
 
@@ -96,7 +97,7 @@ class SubmissionHandler(webapp2.RequestHandler):
 			return (60 * hour + mins)
 
 
-		#Takes mins as int and returns 24 hr time as string hhmm
+		#Takes mins as int and returns 24 hr time as string: hhmm
 		def minsToTime(numMins):
 			hour = numMins / 60
 			str_hour = str(hour)
@@ -110,6 +111,8 @@ class SubmissionHandler(webapp2.RequestHandler):
 
 			return str_hour + str_mins
 
+		#fills an array with Os fro each minute in a day
+		#switches an element to 1 if the person is free at that minute
 		def markTimeAsFree(freeTimeList):
 			#Create an array indicating no free time
 			timeArray = [0] * MINS_PER_DAY
@@ -124,6 +127,8 @@ class SubmissionHandler(webapp2.RequestHandler):
 
 			return timeArray
 
+		#compares two time arrays to determine start and end dates of when both are free.
+		#stores as a list of free block named tuples
 		def combineFreeTimeArrays(timeArrayA, timeArrayB, year, month, day):
 			recordingFreeTime = False
 			startTime = None
@@ -131,24 +136,18 @@ class SubmissionHandler(webapp2.RequestHandler):
 			combinedFreeTimes = list()
 
 			for minute in range(0, MINS_PER_DAY):
-				logging.info("xxxxxxx")
-				logging.info(recordingFreeTime)
-				logging.info(minute)
 
 				#If both arrays share a free time, then set as start time, if a start time has not already been determined
 				if timeArrayA[minute] == 1 and timeArrayB[minute] == 1:
 					if recordingFreeTime == False:
 						recordingFreeTime = True
 						startTime = minsToTime(minute)
-						logging.info("start time")
-						logging.info(startTime)
 
 				else:
 					if recordingFreeTime == True:
 						recordingFreeTime = False
 						endTime = minsToTime(minute - 1)
-						logging.info("endTime time")
-						logging.info(endTime)
+
 
 				#Create a time Free time block and add to the array
 				if startTime != None and endTime != None:
@@ -168,10 +167,6 @@ class SubmissionHandler(webapp2.RequestHandler):
 				
 		timeArrayA = markTimeAsFree(freeTimeListA)
 		timeArrayB = markTimeAsFree(freeTimeListB)
-		logging.info("array a")
-		logging.info(timeArrayA)
-		logging.info("array b")
-		logging.info(timeArrayB)
 
 
 		return combineFreeTimeArrays(timeArrayA, timeArrayB, year, month, day)
