@@ -33,12 +33,12 @@ class SubmissionHandler(webapp2.RequestHandler):
 		jsonParameters = self.request.get('request', self)
 		#Parse out parameters from json
 		requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees = jsonManipulator.getParsedParameters(jsonParameters)
-
+ 
 		#TEST TEST#
 		self.response.write(busy_times_db.busy_times_db("17", "6", "2014", "driskilq"))
 
 
-		
+
 		# for attendee in attendees:
 		# 	for year in range(int(startYear), int(endYear) + 1):
 		# 		for month in range(int(startMonth), int(endMonth) + 1):
