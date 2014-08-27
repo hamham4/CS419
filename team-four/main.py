@@ -18,8 +18,10 @@ import webapp2
 from collections import namedtuple
 import jsonManipulator 
 import busy_times_db
+import busyToFreeTimeConverter
 
 BusyBlock = namedtuple("BusyBlock", "year, month, day, startTime endTime")
+FreeBlock = namedtuple("FreeBlock", "year, month, day, startTime, endTime")
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
@@ -31,17 +33,28 @@ class SubmissionHandler(webapp2.RequestHandler):
 		jsonParameters = self.request.get('request', self)
 		#Parse out parameters from json
 		requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees = jsonManipulator.getParsedParameters(jsonParameters)
-		busyTimes = busy_times_db.busy_times_db("17", "06", "2014", "driskilq" )
-		self.response.write(busyTimes)
-		self.response.write("boo")
 
+		#TEST TEST#
+		self.response.write(busy_times_db.busy_times_db("17", "6", "2014", "driskilq"))
+
+
+		
 		# for attendee in attendees:
-		# 	for year in range(int(startYear), int(endYear)+ 1):
+		# 	for year in range(int(startYear), int(endYear) + 1):
 		# 		for month in range(int(startMonth), int(endMonth) + 1):
 		# 			for day in range(int(startDay), int(endDay) + 1):
-		# 				busyTimes = busy_times_db.busy_times_db(day, month, year, attendee)
-		# 				self.response.write(busyTimes)
+						
+		# 				busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
+		# 				# if len(busyTeachingTimesList) == 0:
+		# 				# 	freeTeachingTimesList = list()
+		# 				# 	freeBlock = FreeBlock(year, month, day, "0000", "2359")
+		# 				# 	freeTeachingTimesList.append(freeBlock)
+		# 				# else:
+		# 				# 	freeTeachingTimesList = busyToFreeTimeConverter.getFreeTimesList(busyTeachingTimesList)
+		# 				#busyCalendarTime = blahblabhblajbhlbla
 
+		# 				self.response.write(busyTeachingTimesList)
+		# 				#self.response.write(freeTeachingTimesList)
 
 
 app = webapp2.WSGIApplication([
