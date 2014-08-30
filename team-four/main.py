@@ -99,12 +99,12 @@ class SubmissionHandler(webapp2.RequestHandler):
 
 		#Takes mins as int and returns 24 hr time as string: hhmm
 		def minsToTime(numMins):
-			hour = numMins / 60
+			hour = int(numMins / 60)
 			str_hour = str(hour)
 			if len(str_hour) < 2:
 				str_hour = "0" + str_hour
 			
-			mins = numMins % 60
+			mins = int(numMins % 60)
 			str_mins = str(mins)
 			if len(str_mins) < 2:
 				str_mins = "0" + str_mins
