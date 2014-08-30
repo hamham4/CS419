@@ -30,7 +30,7 @@ FLOW = client.flow_from_clientsecrets(CLIENT_SECRETS,
     message=tools.message_if_missing(CLIENT_SECRETS))
 
 
-def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
+def googleSearch(userId, startYear, endYear, startMonth, endMonth, startday, endDay, startTime, endTime):
 
   #used from the google reference code
   storage = file.Storage('sample.dat')
@@ -51,9 +51,9 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
     tz = "-0000"
     page_token = None
     #put the start time string togetheradd 01 for the seconds or else it wont get the item starting at that exact time, whcih I want
-    myStartTime = startDate + "T" + startTimeParam + ":01" + tz
+    myStartTime = startYear + startMonth + startday + "T" + startTime + ":01" + tz
     #end time  string put together  add :00 for the seconds or else it fails
-    myEndTime = endDate + "T" + endTime + ":00" + tz
+    myEndTime = endYear + endMonth + endDay + "T" + endTime + ":00" + tz
 
     while True:
 		#get the calendar id is always the onid plus this email or else it wont work
@@ -62,7 +62,7 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
 
       startTime = "startTime"
 
-	  #we run into an issue if the calendar iddoesnt exist
+	  #we run into an issue if the calendar id doesnt exist
       try:
 		#when we get the events
 		#order by the start time, have it all as single events, min and max time are our parameters we put in
