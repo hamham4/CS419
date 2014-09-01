@@ -50,13 +50,13 @@ class SubmissionHandler(webapp2.RequestHandler):
 		#recomendations = getRecommendations(allFreeTimes, requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees)
 	@staticmethod
 	def getAllFreeTimes(attendees, startYear, endYear, startMonth, endMonth, startDay, endDay):
-		allFreeTimes = dict()
-		for attendee in attendees:
-			freeBlocksByDay = list()
-			for year in range(int(startYear), int(endYear) + 1):
-				for month in range(int(startMonth), int(endMonth) + 1):
-					for day in range(int(startDay), int(endDay) + 1):
-						
+		allFreeTimes = list()
+		for year in range(int(startYear), int(endYear) + 1):
+			for month in range(int(startMonth), int(endMonth) + 1):
+				for day in range(int(startDay), int(endDay) + 1):
+					freeTimesByDay = dict()
+					for attendee in attendees:
+
 							##DEMO##
 						#busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
 						busyTeachingTimesList = [BusyBlock(year='2014', month='06', day='17', startTime=u'0900', endTime=u'1100'), BusyBlock(year='2014', month='06', day='17', startTime=u'1300', endTime=u'1550'), BusyBlock(year='2014', month='06', day='17', startTime=u'1700', endTime=u'2050')]
@@ -68,17 +68,17 @@ class SubmissionHandler(webapp2.RequestHandler):
 
 						#Convert the busy calendar times to free times
 						freeCalendarTimesList = SubmissionHandler.convertToFreeTimes(busyCalendarTimesList, year, month, day)
-						
+					
 						#Get a list of the combined free times
 						combinedFreeTimes = SubmissionHandler.mergeFreeTimes(freeTeachingTimesList, freeCalendarTimesList, year, month, day)
 
-						freeBlocksByDay.append(combinedFreeTimes)
+						freeTimesByDay[attendee] = combinedFreeTimes
 
 						logging.info("combined free times")
 						logging.info(combinedFreeTimes)
 
-
-			allFreeTimes[attendee] = freeBlocksByDay
+					allFreeTimes.append(freeTimesByDay)
+		logging.info(allFreeTimes)
 		return allFreeTimes
 	@staticmethod
 	def convertToFreeTimes(busyTimesList, year, month, day):
