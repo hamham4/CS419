@@ -23,6 +23,8 @@ ft2["jones"] = [[s8]]
 ft2["siple"] = [[s7]]
 
 lst = [ft1, ft2]
+strt = '1100'
+endt = '1200'
 
 def getAttendees( allFreeTimes, day, month, year, sTime, eTime ):
 	avail = list()
@@ -35,18 +37,18 @@ def getAttendees( allFreeTimes, day, month, year, sTime, eTime ):
 
 	return avail
 
-def firstMark(n, timeArr):
+def firstMark(n, timeArr, strt, endt):
 	
 	for block in n:
-		startMins = int( timeToMins(block.startTime) )
+		startMins = int( timeToMins(strt) )
 		logging.info("================START block min==================")
-		logging.info(block.startTime)
+		logging.info(strt)
 		logging.info("================START MIN==================")
 		logging.info(startMins)
 
-		endMins = int( timeToMins(block.endTime) )
+		endMins = int( timeToMins(endt) )
 		logging.info("================END block MIN==================")
-		logging.info(block.endTime)
+		logging.info(endt)
 		logging.info("================END MIN==================")
 		logging.info(endMins)
 
@@ -92,7 +94,7 @@ def minsToTime(numMins):
 
 	return (str_hour + str_mins)
 	
-def getCommonFreeTimes( lst ):
+def getCommonFreeTimes( lst, strt, endt ):
 	
 	commonFreeTimes = list()
 	logging.info("================LIST==================")
@@ -122,10 +124,9 @@ def getCommonFreeTimes( lst ):
 						day = block.day
 						year = block.year
 						break
-					timeArr = firstMark( freeList, timeArr )
+					timeArr = firstMark( freeList, timeArr, strt, endt )
 					flag = 1
-				else:
-					timeArr = markTimes( freeList, timeArr )
+				timeArr = markTimes( freeList, timeArr )
 
 		for minute in range(0, MINS_PER_DAY):
 			if timeArr[minute] == 1:
@@ -137,7 +138,7 @@ def getCommonFreeTimes( lst ):
 					recordingFreeTime = False
 					endTime = minsToTime(minute - 1)
 
-			if startTime != None and endTime != None:
+			if startTime != None and endTime != None and startTime != endTime:
 				sharedTime = FreeBlock(year, month, day, startTime, endTime)
 				commonFreeTimes.append(sharedTime)
 				startTime = None
@@ -151,5 +152,5 @@ def getCommonFreeTimes( lst ):
 
 	return commonFreeTimes
 	
-r = getCommonFreeTimes( lst )
+r = getCommonFreeTimes( lst, strt, endt )
 print(r)
