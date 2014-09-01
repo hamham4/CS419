@@ -20,15 +20,23 @@ import jsonManipulator
 import busy_times_db
 import busyToFreeTimeConverter
 import logging
+import jinja2
+import os
 
-MINS_PER_DAY = 1440
+JINJA_ENVIRONMENT = jinja2.Environment(
+    loader = jinja2.FileSystemLoader(os.path.dirname(__file__)),
+    extensions = ['jinja2.ext.autoescape'],
+    autoescape = True)
+
 
 BusyBlock = namedtuple("BusyBlock", "year, month, day, startTime endTime")
 FreeBlock = namedtuple("FreeBlock", "year, month, day, startTime, endTime")
 
 class MainHandler(webapp2.RequestHandler):
     def get(self):
-        self.response.write('Hello world!')
+
+		template = JINJA_ENVIRONMENT.get_template('submitForm.html')
+		self.response.write(template.render())
 
 class SubmissionHandler(webapp2.RequestHandler):
 	def post(self):
@@ -39,6 +47,7 @@ class SubmissionHandler(webapp2.RequestHandler):
  
 		allFreeTimes = SubmissionHandler.getAllFreeTimes(attendees, startYear, endYear, startMonth, endMonth, startDay, endDay)
 
+		#recomendations = getRecommendations(allFreeTimes, requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees)
 	@staticmethod
 	def getAllFreeTimes(attendees, startYear, endYear, startMonth, endMonth, startDay, endDay):
 		allFreeTimes = dict()
@@ -48,9 +57,10 @@ class SubmissionHandler(webapp2.RequestHandler):
 				for month in range(int(startMonth), int(endMonth) + 1):
 					for day in range(int(startDay), int(endDay) + 1):
 						
+							##DEMO##
 						#busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
 						busyTeachingTimesList = [BusyBlock(year='2014', month='06', day='17', startTime=u'0900', endTime=u'1100'), BusyBlock(year='2014', month='06', day='17', startTime=u'1300', endTime=u'1550'), BusyBlock(year='2014', month='06', day='17', startTime=u'1700', endTime=u'2050')]
-						##DEMO##
+					
 						busyCalendarTimesList = [BusyBlock(year='2014', month='06', day='17', startTime=u'0000', endTime=u'1200'), BusyBlock(year='2014', month='06', day='17', startTime=u'1300', endTime=u'1900')]
 
 						#Convert the busy teaching times to free times
@@ -87,6 +97,7 @@ class SubmissionHandler(webapp2.RequestHandler):
 	#the arrays are compared. where an element is true in both arrays, we know that the people are free at the same time
 	@staticmethod
 	def mergeFreeTimes(freeTimeListA, freeTimeListB, year, month, day):
+		MINS_PER_DAY = 1440
 
 		#Takes time as string and returns mins in int
 		def timeToMins(time):
@@ -95,7 +106,6 @@ class SubmissionHandler(webapp2.RequestHandler):
 			mins = int(time[(length - 2) : length])
 
 			return (60 * hour + mins)
-
 
 		#Takes mins as int and returns 24 hr time as string: hhmm
 		def minsToTime(numMins):
@@ -111,7 +121,7 @@ class SubmissionHandler(webapp2.RequestHandler):
 
 			return str_hour + str_mins
 
-		#fills an array with Os fro each minute in a day
+		#fills an array with 0s fro each minute in a day
 		#switches an element to 1 if the person is free at that minute
 		def markTimeAsFree(freeTimeList):
 			#Create an array indicating no free time
@@ -157,14 +167,16 @@ class SubmissionHandler(webapp2.RequestHandler):
 					endTime = None
 
 
-			#If the end time was the nd of the day
+			#If the end time was the end of the day
 			if startTime != None and endTime == None:
 				endTime = "2459"
 				sharedFreeTime = FreeBlock(year, month, day, startTime, endTime)
 				combinedFreeTimes.append(sharedFreeTime)
 
 			return combinedFreeTimes
-				
+		
+
+
 		timeArrayA = markTimeAsFree(freeTimeListA)
 		timeArrayB = markTimeAsFree(freeTimeListB)
 
