@@ -31,7 +31,7 @@ def displayOptions(screen, subwin):
 	start_y = start_y + 1
 	subwin.addstr(start_y, start_x, "2: Add usernames (at least one needed)")
 	start_y = start_y + 1
-	subwin.addstr(start_y, start_x, "3: Edit window dates (default tomorrow)")
+	subwin.addstr(start_y, start_x, "3: Edit window dates (default today)")
 	start_y = start_y + 1
 	subwin.addstr(start_y, start_x, "4: Edit window times (default 9am - 5pm)")
 	start_y = start_y + 1
@@ -158,8 +158,9 @@ def convertRequestToJson(attendees, dayWindow, timeWindow, schedulingGoal):
 	jsonRequest = '{"request": {"type": "' + requestType + '","startYear": "' + str(startYear) + '","endYear": "' + str(endYear) + '","startMonth": "' + startMonth + '","endMonth": "' + endMonth + '","startDay": "' + startDay + '","endDay": "' + endDay + '","startTime": "' + startTime + '","endTime": "' + endTime  + '","attendees": {"attendee": ['
 
 	for attendee in attendees:
-		jsonRequest = jsonRequest + '"{username": "' + attendee + '"}'
+		jsonRequest = jsonRequest + '"{username": "' + attendee + '"},'
 
+	jsonRequest = jsonRequest[0, len(jsonRequest) - 1]
 	jsonRequest = jsonRequest + ']}}}'
 
 	return jsonRequest
@@ -438,7 +439,7 @@ def main(screen):
 	attendees = None
 
 	#Set default date window as tomorrow
-	dateWindow = DateWindow(date.today().year, date.today().month, date.today().day + 1, date.today().year, date.today().month, date.today().day + 1)
+	dateWindow = DateWindow(date.today().year, date.today().month, date.today().day, date.today().year, date.today().month, date.today().day + 1)
 	timeWindow = TimeWindow("9", "00", "17", "00")
 	
 	#Set default scheduling goals

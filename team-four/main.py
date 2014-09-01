@@ -49,6 +49,8 @@ class SubmissionHandler(webapp2.RequestHandler):
 		allFreeTimes = SubmissionHandler.getAllFreeTimes(attendees, startYear, endYear, startMonth, endMonth, startDay, endDay)
 
 		recommendations = SubmissionHandler.getRecommendations(allFreeTimes, requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees)
+		self.response.write(recommendations)
+		self.response.write("\n cheese")
 		logging.info("===recommendations====")
 		logging.info(recommendations)
 	@staticmethod
