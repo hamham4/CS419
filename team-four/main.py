@@ -22,6 +22,7 @@ import busyToFreeTimeConverter
 import logging
 import jinja2
 import os
+import scheduler
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -47,7 +48,26 @@ class SubmissionHandler(webapp2.RequestHandler):
  
 		allFreeTimes = SubmissionHandler.getAllFreeTimes(attendees, startYear, endYear, startMonth, endMonth, startDay, endDay)
 
-		#recomendations = getRecommendations(allFreeTimes, requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees)
+		recommendations = SubmissionHandler.getRecommendations(allFreeTimes, requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees)
+		logging.info("===recommendations====")
+		logging.info(recommendations)
+	@staticmethod
+	def getRecommendations(allFreeTimes, requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees):
+		if requestType == "findAttendees":
+			freeAttendees = scheduler.getAttendees(allFreeTimes, startDay, startMonth, startYear, startTime, endTime)
+
+			#TO DO - CHANGE THE FORMAT THIS IS RETURNED IN #
+			return freeAttendees
+
+		elif requestType == "findTime":
+			freeTimes = scheduler.getCommonFreeTimes(allFreeTimes)
+
+			#TO DO= CHANGE THE FORMAT THIS IS RETURNED IN #
+			return freeTimes
+
+		else:
+			return "error! invalid request type"
+
 	@staticmethod
 	def getAllFreeTimes(attendees, startYear, endYear, startMonth, endMonth, startDay, endDay):
 		allFreeTimes = list()
@@ -56,7 +76,7 @@ class SubmissionHandler(webapp2.RequestHandler):
 				for day in range(int(startDay), int(endDay) + 1):
 					freeTimesByDay = dict()
 					for attendee in attendees:
-
+						bigList = list()
 							##DEMO##
 						#busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
 						busyTeachingTimesList = [BusyBlock(year='2014', month='06', day='17', startTime=u'0900', endTime=u'1100'), BusyBlock(year='2014', month='06', day='17', startTime=u'1300', endTime=u'1550'), BusyBlock(year='2014', month='06', day='17', startTime=u'1700', endTime=u'2050')]
@@ -71,8 +91,8 @@ class SubmissionHandler(webapp2.RequestHandler):
 					
 						#Get a list of the combined free times
 						combinedFreeTimes = SubmissionHandler.mergeFreeTimes(freeTeachingTimesList, freeCalendarTimesList, year, month, day)
-
-						freeTimesByDay[attendee] = combinedFreeTimes
+						bigList.append(combinedFreeTimes)
+						freeTimesByDay[attendee] = bigList
 
 						logging.info("combined free times")
 						logging.info(combinedFreeTimes)
@@ -132,6 +152,7 @@ class SubmissionHandler(webapp2.RequestHandler):
 				year, month, day, startTime, endTime = freeTime
 				startMins = timeToMins(startTime)
 				endMins = timeToMins(endTime)
+
 				for i in range(startMins, endMins + 1):
 					timeArray[i] = 1
 
@@ -169,7 +190,7 @@ class SubmissionHandler(webapp2.RequestHandler):
 
 			#If the end time was the end of the day
 			if startTime != None and endTime == None:
-				endTime = "2459"
+				endTime = "2359"
 				sharedFreeTime = FreeBlock(year, month, day, startTime, endTime)
 				combinedFreeTimes.append(sharedFreeTime)
 
