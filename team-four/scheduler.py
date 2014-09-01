@@ -1,4 +1,5 @@
 from collections import namedtuple
+import logging
 
 MINS_PER_DAY = 1440
 FreeBlock = namedtuple("FreeBlock", "year, month, day, startTime, endTime")
@@ -23,7 +24,7 @@ ft2["siple"] = [[s7]]
 
 lst = [ft1, ft2]
 
-def whoIsFree( allFreeTimes, day, month, year, sTime, eTime ):
+def getAttendees( allFreeTimes, day, month, year, sTime, eTime ):
 	avail = list()
 
 	for key in sorted(allFreeTimes):
@@ -38,7 +39,17 @@ def firstMark(n, timeArr):
 	
 	for block in n:
 		startMins = int( timeToMins(block.startTime) )
+		logging.info("================START block min==================")
+		logging.info(block.startTime)
+		logging.info("================START MIN==================")
+		logging.info(startMins)
+
 		endMins = int( timeToMins(block.endTime) )
+		logging.info("================END block MIN==================")
+		logging.info(block.endTime)
+		logging.info("================END MIN==================")
+		logging.info(endMins)
+
 		for i in range(startMins, endMins + 1):
 			timeArr[i] = 1
 
@@ -49,7 +60,9 @@ def markTimes(n, timeArr):
 	
 	for block in n:
 		startMins = int( timeToMins(block.startTime) )
+		
 		endMins = int( timeToMins(block.endTime) )
+		
 		for i in range(startMins, endMins + 1):
 			newArr[i] = 1
 	
@@ -79,10 +92,14 @@ def minsToTime(numMins):
 
 	return (str_hour + str_mins)
 	
-def commonFreeTime( lst ):
+def getCommonFreeTimes( lst ):
 	
 	commonFreeTimes = list()
-	for item in lst:
+	logging.info("================LIST==================")
+	logging.info(lst)
+	for dictionary in lst:
+		logging.info("================DICTIONARY==================")
+		logging.info(dictionary)
 		timeArr = [0] * MINS_PER_DAY
 		recordingFreeTime = False
 		startTime = None
@@ -91,18 +108,24 @@ def commonFreeTime( lst ):
 		day = None
 		year = None
 		flag = 0
-		for key in sorted(item):
-			for n in item[key]:
+		for key in sorted(dictionary):
+			logging.info("================KEY==================")
+			logging.info(key)
+			for freeList in dictionary[key]:
+				logging.info("================freeList==================")
+				logging.info(freeList)
 				if flag == 0:
-					for block in n:
+					for block in freeList:
+						logging.info("================BLOCK==================")
+						logging.info(block)
 						month = block.month
 						day = block.day
 						year = block.year
 						break
-					timeArr = firstMark( n, timeArr )
+					timeArr = firstMark( freeList, timeArr )
 					flag = 1
 				else:
-					timeArr = markTimes( n, timeArr )
+					timeArr = markTimes( freeList, timeArr )
 
 		for minute in range(0, MINS_PER_DAY):
 			if timeArr[minute] == 1:
@@ -119,7 +142,14 @@ def commonFreeTime( lst ):
 				commonFreeTimes.append(sharedTime)
 				startTime = None
 				endTime = None
+
+		#If the end time was the end of the day
+		if startTime != None and endTime == None:
+			endTime = "2359"
+			sharedTime = FreeBlock(year, month, day, startTime, endTime)
+			commonFreeTimes.append(sharedTime)
+
 	return commonFreeTimes
 	
-r = commonFreeTime( lst )
+r = getCommonFreeTimes( lst )
 print(r)
