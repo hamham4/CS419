@@ -15,10 +15,39 @@
         });
 
         $(document).ready(function(){
-          $("#addUser").click(function(){
-            $("#usernames").append("<br>Username: <input type='text' name='username' id='username'/>");
-          }); 
-      });
+            $("#addUser").click(function(){
+              $("#usernames").append("<br>Username: <input type='text' name='username' id='username'/>");
+            }); 
+
+            $("#submit").click(function(){
+              var requestType = $("#requestType:checked").val();
+
+              var startDate =$("#sdatepicker").val()
+              var startYear = startDate.slice(6, 10);
+              var startMonth = startDate.slice(0, 2);
+              var startDay = startDate.slice(3, 5);
+              var endDate =$("#edatepicker").val()
+              var endYear = endDate.slice(6, 10);
+              var endDay = endDate.slice(3, 5);
+              var endMonth = endDate.slice(0, 2);
+             
+              var startHour =$("#startHour").val()
+              var startMin = $("#startMin").val()
+              var startTime = ""
+              startTime = startTime + startHour + startMin
+
+              var endHour =$("#endHour").val()
+              var endMin = $("#endMin").val()
+              var endTime = ""
+              endTime = endTime + endHour + endMin
+
+              alert(endTime);
+
+            });
+
+
+        });
+
 
         </script>
   </head>
@@ -27,15 +56,13 @@
     <h1>Team 4: Event Scheduler</h1>
 
 
-      <div><h3>Step 1: Select scheduling goal</h3> <input type="radio" name="requestType" value="findTime">Find a time when everyone is free<br><input type="radio" name="requestType" value="findAttendees">Find the attendees who are free</div>
+      <h3>Step 1: Select scheduling goal</h3> <input type="radio" id="requestType" name="requestType" value="findTime" checked>Find a time when everyone is free<br><input type="radio" id = "requestType" name="requestType" value="findAttendees" >Find the attendees who are free
       
-      <div><h3>Step 2: Add a username (at least one needed)</h3> 
-        
+      <h3>Step 2: Add a username (at least one needed)</h3> 
       <div id="usernames"</div>
         Username: <input type="text" name="username" />
       </div>
       <button id="addUser">Add Username</button>
-    </div>
 
       <div><h3>Step 3: Select start and end date of scheduling window</h3> 
       Start Date: <input type="text" id="sdatepicker" name="startDate"/>  
@@ -43,7 +70,7 @@
       </div> 
 
       <div><h3>Step 4: Select start and end time of scheudling window</h3></div>
-      Start Hour: <select name="startHour">
+      Start Hour: <select name="startHour" id ="startHour">
       <option value="00">00</option>
       <option value="01">01</option>
       <option value="02">02</option>
@@ -70,7 +97,7 @@
       <option value="23">23</option>
     </select>
       Start Minute:
-      <select name="startMin">
+      <select name="startMin" id = "startMin">
         <option value="00">00</option>
         <option value="01">01</option>
         <option value="02">02</option>
@@ -133,7 +160,7 @@
         <option value="59">59</option>
       </select>
       <br>
-      End Hour: <select name="endHour">
+      End Hour: <select name="endHour" id="endHour">
       <option value="00">00</option>
       <option value="01">01</option>
       <option value="02">02</option>
@@ -160,7 +187,7 @@
       <option value="23">23</option>
     </select>
       End Minute:
-      <select name="endMin">
+      <select name="endMin" id="endMin">
         <option value="00">00</option>
         <option value="01">01</option>
         <option value="02">02</option>
@@ -228,7 +255,7 @@
 </select>
       <div><h3>Step 5: Submit to get scheduling recommendations</h3> </div>
 
-      <div><input type="submit" value="Submit" /></div>
+      <button id="submit">Submit</button>
 
 
 
