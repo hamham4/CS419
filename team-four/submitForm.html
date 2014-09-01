@@ -16,7 +16,7 @@
 
         $(document).ready(function(){
             $("#addUser").click(function(){
-              $("#usernames").append("<br>Username: <input type='text' name='username' id='username'/>");
+              $("#usernames").append("<br>Username: <input type='text' name='username'/>");
             }); 
 
             $("#submit").click(function(){
@@ -39,10 +39,23 @@
               var endHour =$("#endHour").val()
               var endMin = $("#endMin").val()
               var endTime = ""
-              endTime = endTime + endHour + endMin
 
-              alert(endTime);
+              endTime = endTime + endHour + endMin;
 
+
+              var attendees = "";
+
+              $("#usernames").children("input[type=text]").each(function() {
+                  console.log($(this).val());
+                  attendees = attendees + ' {"username": "' + $(this).val() + '"},'
+              });
+
+              attendees = attendees.slice(0, attendees.length -1)
+              
+
+              jsonRequest = '{"request": {"type": "' + requestType + '","startYear": "' + startYear + '","endYear": "' + endYear + '","startMonth": "' + startMonth + '","endMonth": "' + endMonth + '","startDay": "' + startDay + '","endDay": "' + endDay + '","startTime": "' + startTime + '","endTime": "' + endTime  + '","attendees": {"attendee": [' + attendees + ']}}}'
+
+              alert(jsonRequest);
             });
 
 
@@ -59,7 +72,7 @@
       <h3>Step 1: Select scheduling goal</h3> <input type="radio" id="requestType" name="requestType" value="findTime" checked>Find a time when everyone is free<br><input type="radio" id = "requestType" name="requestType" value="findAttendees" >Find the attendees who are free
       
       <h3>Step 2: Add a username (at least one needed)</h3> 
-      <div id="usernames"</div>
+      <div id="usernames">
         Username: <input type="text" name="username" />
       </div>
       <button id="addUser">Add Username</button>
@@ -250,17 +263,9 @@
         <option value="59">59</option>
       </select>
 
-
-</select>
-</select>
       <div><h3>Step 5: Submit to get scheduling recommendations</h3> </div>
 
       <button id="submit">Submit</button>
-
-
-
-    <hr/>
-
 
   </body>
 </html>
