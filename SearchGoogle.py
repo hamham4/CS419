@@ -19,6 +19,8 @@ from oauth2client import file
 from oauth2client import client
 from oauth2client import tools
 
+BusyBlock = namedtuple("BusyBlock", "year, month, day, startTime endTime")
+
 CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), 'client_secrets.json')
 
 FLOW = client.flow_from_clientsecrets(CLIENT_SECRETS,
@@ -45,13 +47,10 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
   service = discovery.build('calendar', 'v3', http=http)
 
   try:
-    #put the tz as 0000 so it searches the calendar with no timezone change, will handle this after
+
     tz = "-0000"
     page_token = None
-    #put the start time string togetheradd 01 for the seconds or else it wont get the item starting at that exact time, which I want
-    #myStartTime = startYear + startMonth + startday + "T" + startTime + ":01" + tz
-    #end time  string put together  add :00 for the seconds or else it fails
-    #myEndTime = endYear + endMonth + endDay + "T" + endTime + ":00" + tz
+
     myStartTime = startDate + "T" + startTimeParam + ":01" + tz
     #end time  string put together  add :00 for the seconds or else it fails
     myEndTime = endDate + "T" + endTime + ":00" + tz
@@ -81,6 +80,7 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
 
       ld_writeDicts('/Users/Rezalution/Documents/LiClipse Workspace/Calendar/results.json', events)
 
+      #busyTimes = list()
 
       with open("results.json") as json_file:
         json_data = json.load(json_file)
@@ -94,17 +94,17 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
                 start1 = str(start)
                 if len(start1) == 43:
                     st1 = start1[16:32]
-                    sYear = st1[0:4]
-                    sMonth = st1[5:7]
-                    sDay = st1[8:10]
+                    year = st1[0:4]
+                    month = st1[5:7]
+                    day = st1[8:10]
                     sHour = st1[11:13]
                     sMin =  st1[14:16]
                     startTime = sHour + sMin
                 if len(start1) == 24:
                     st1 = start1[12:22]
-                    sYear = st1[0:4]
-                    sMonth = st1[5:7]
-                    sDay = st1[8:10]
+                    year = st1[0:4]
+                    month = st1[5:7]
+                    day = st1[8:10]
                     #sHour = st1[12:13]
                     #sMin =  st1[14:15]
                     startTime = "0000"
@@ -126,9 +126,12 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
                     #eHour = en1[11:13]
                     #eMin =  en1[14:16]
                     endTime = "0000"
-            #print sYear, sMonth, sDay, startTime, eYear, eYear, eMonth, eDay, endTime
 
-            BusyBlock = namedtuple("BusyBlock", "sYear, sMonth, sDay, startTime, endTime")
+            print year, month, day, startTime, eYear, eYear, eMonth, eDay, endTime
+
+            busyBlock = BusyBlock(year, month, day, startTime, endTime)
+            busyTimes.append(busyBlock)
+        return busyTimes
 
       if not page_token:
         break
@@ -142,17 +145,27 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
 
 if __name__ == '__main__':
   userId = "rezalution786"
-  startDate = "2014-08-30"
-  startTimeParam = "00:00"
-  endTime = "00:00"
-  endDate = "2014-09-02"
-  #startYear = 2014
-  #endYear= 2014
-  #startMonth = 07
-  #endMonth = 10
-  #startday = 01
-  #endDay = 30
-  #startTime = 0000
-  #endTime = 0000
+
+  startYear = "2014"
+  startMonth = "08"
+  startDay =  "30"
+  startDate = startYear + "-" + startMonth + "-" + startDay
+  startDate = str(startDate)
+
+  startHour = "00"
+  startMin =  "00"
+  startTimeParam = startHour + ":" + startMin
+  startTimeParam = str(startTimeParam)
+
+  endHour = "00"
+  endMin = "00"
+  endTime = endHour + ":" + endMin
+  endTime = str(endTime)
+
+  endYear = "2014"
+  endMonth = "09"
+  endDay =  "02"
+  endDate = endYear + "-" + endMonth + "-" + endDay
+  endDate = str(endDate)
 
   googleSearch(userId, startTimeParam, startDate, endTime, endDate)
