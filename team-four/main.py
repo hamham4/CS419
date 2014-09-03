@@ -23,6 +23,7 @@ import logging
 import jinja2
 import os
 import scheduler
+#import SearchGoogle
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -47,7 +48,7 @@ class SubmissionHandler(webapp2.RequestHandler):
 		requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees = jsonManipulator.getParsedParameters(jsonParameters)
  
 		allFreeTimes = SubmissionHandler.getAllFreeTimes(attendees, startYear, endYear, startMonth, endMonth, startDay, endDay)
-		logging.info("===free times====")
+		logging.info("=== all free times====")
 		logging.info(allFreeTimes)
 		#self.response.write(allFreeTimes)
 		recommendations = SubmissionHandler.getRecommendations(allFreeTimes, requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees)
@@ -83,10 +84,11 @@ class SubmissionHandler(webapp2.RequestHandler):
 					for attendee in attendees:
 						bigList = list()
 							##DEMO##
-						#busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
-						busyTeachingTimesList = [BusyBlock(year='2014', month='06', day='17', startTime=u'0900', endTime=u'1100'), BusyBlock(year='2014', month='06', day='17', startTime=u'1300', endTime=u'1550'), BusyBlock(year='2014', month='06', day='17', startTime=u'1700', endTime=u'2050')]
+						busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
+						#busyTeachingTimesList = [BusyBlock(year='2014', month='09', day='12', startTime=u'0900', endTime=u'1100')]
 					
-						busyCalendarTimesList = [BusyBlock(year='2014', month='06', day='17', startTime=u'0000', endTime=u'1200'), BusyBlock(year='2014', month='06', day='17', startTime=u'1300', endTime=u'1900')]
+						busyCalendarTimesList = []
+						#busyCalendarTimesList = SearchGoogle.googleSearch(attendee, "0900", "040303", "0000", "dafda")
 
 						#Convert the busy teaching times to free times
 						freeTeachingTimesList = SubmissionHandler.convertToFreeTimes(busyTeachingTimesList, year, month, day)
@@ -99,16 +101,16 @@ class SubmissionHandler(webapp2.RequestHandler):
 						bigList.append(combinedFreeTimes)
 						freeTimesByDay[attendee] = bigList
 
-						logging.info("combined free times")
-						logging.info(combinedFreeTimes)
+		
 
 					allFreeTimes.append(freeTimesByDay)
-		logging.info(allFreeTimes)
+
 		return allFreeTimes
 	@staticmethod
 	def convertToFreeTimes(busyTimesList, year, month, day):
+		freeTimesList = list()
 		if len(busyTimesList) == 0:
-			freeTimesList = list()
+			
 			freeBlock = FreeBlock(year, month, day, "0000", "2359")
 			freeTimesList.append(freeBlock)
 		else:

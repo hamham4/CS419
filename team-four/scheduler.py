@@ -41,16 +41,9 @@ def firstMark(n, timeArr, strt, endt):
 	
 	for block in n:
 		startMins = int( timeToMins(strt) )
-		logging.info("================START block min==================")
-		logging.info(strt)
-		logging.info("================START MIN==================")
-		logging.info(startMins)
 
 		endMins = int( timeToMins(endt) )
-		logging.info("================END block MIN==================")
-		logging.info(endt)
-		logging.info("================END MIN==================")
-		logging.info(endMins)
+
 
 		for i in range(startMins, endMins + 1):
 			timeArr[i] = 1
@@ -97,11 +90,8 @@ def minsToTime(numMins):
 def getCommonFreeTimes( lst, strt, endt ):
 	
 	commonFreeTimes = list()
-	logging.info("================LIST==================")
-	logging.info(lst)
+
 	for dictionary in lst:
-		logging.info("================DICTIONARY==================")
-		logging.info(dictionary)
 		timeArr = [0] * MINS_PER_DAY
 		recordingFreeTime = False
 		startTime = None
@@ -111,15 +101,12 @@ def getCommonFreeTimes( lst, strt, endt ):
 		year = None
 		flag = 0
 		for key in sorted(dictionary):
-			logging.info("================KEY==================")
-			logging.info(key)
+
 			for freeList in dictionary[key]:
-				logging.info("================freeList==================")
-				logging.info(freeList)
+
 				if flag == 0:
 					for block in freeList:
-						logging.info("================BLOCK==================")
-						logging.info(block)
+
 						month = block.month
 						day = block.day
 						year = block.year
