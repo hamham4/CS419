@@ -20,6 +20,9 @@
             }); 
 
             $("#submit").click(function(){
+              var error = false;
+              $("#error").empty();
+              $("#response").empty();
               var requestType = $("#requestType:checked").val();
 
               var startDate =$("#sdatepicker").val()
@@ -44,16 +47,44 @@
 
 
               var attendees = "";
-
+              var attendeeCount = 0;
               $("#usernames").children("input[type=text]").each(function() {
                   if ($(this).val() != "") {
-                    attendees = attendees + ' {"username": "' + $(this).val() + '"},'
+                    attendees = attendees + ' {"username": "' + $(this).val() + '"},';
+                    attendeeCount = attendeeCount + 1;
                   }
                   
               });
 
-              attendees = attendees.slice(0, attendees.length -1)
-              
+
+              if (attendeeCount == 0) {
+                error = true;
+                alert("At least one attendee is needed");
+              }
+              if (parseInt(startYear) > parseInt(endYear)) {
+                error = true;
+                alert("End year cannot be smaller than start year");
+              }
+              if (parseInt(startYear) == parseInt(endYear) && parseInt(startMonth) > parseInt(endMonth)){
+                error = true;
+                alert("End month cannot be smaller than start month");
+              }
+              if (parseInt(startYear) == parseInt(endYear) && parseInt(startMonth) == parseInt(endMonth) && parseInt(startDay) > parseInt(endDay)){
+                  error = true;
+                alert("End day cannot be smaller than start day");
+              }
+              if (parseInt(startTime) > parseInt(endTime) ) {
+                error = true;
+                alert("End time cannot be smaller than start time");
+              }
+              if (requestType == "findAttendees" && startDate != endDate) {
+                error = true;
+                alert("Choose a specific day for this option.");
+              }
+
+              if (error == false) {
+              attendees = attendees.slice(0, attendees.length -1);
+
 
               jsonRequest = '{"request": {"type": "' + requestType + '","startYear": "' + startYear + '","endYear": "' + endYear + '","startMonth": "' + startMonth + '","endMonth": "' + endMonth + '","startDay": "' + startDay + '","endDay": "' + endDay + '","startTime": "' + startTime + '","endTime": "' + endTime  + '","attendees": {"attendee": [' + attendees + ']}}}'
 
@@ -95,7 +126,7 @@
               });
 
               
-
+            } //end of false
             //end of on click
             });
 
@@ -108,7 +139,7 @@
   <body>
 
     <h1>Team 4: Event Scheduler</h1>
-
+    <div id = "error"> </div>
 
       <h3>Step 1: Select scheduling goal</h3> <input type="radio" id="requestType" name="requestType" value="findTime" checked>Find a time when everyone is free<br><input type="radio" id = "requestType" name="requestType" value="findAttendees" >Find the attendees who are free
       
