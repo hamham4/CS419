@@ -46,7 +46,6 @@
               var attendees = "";
 
               $("#usernames").children("input[type=text]").each(function() {
-                  console.log($(this).val());
                   attendees = attendees + ' {"username": "' + $(this).val() + '"},'
               });
 
@@ -55,7 +54,35 @@
 
               jsonRequest = '{"request": {"type": "' + requestType + '","startYear": "' + startYear + '","endYear": "' + endYear + '","startMonth": "' + startMonth + '","endMonth": "' + endMonth + '","startDay": "' + startDay + '","endDay": "' + endDay + '","startTime": "' + startTime + '","endTime": "' + endTime  + '","attendees": {"attendee": [' + attendees + ']}}}'
 
-              alert(jsonRequest);
+              $.post("/submit",
+              {
+                request: jsonRequest,
+              },
+              function(data,status){
+                var obj = JSON.parse(data);
+                if (obj.response.valid == "false") {
+                  $("#response").empty();
+                  $("#response").html("<h2>Scheduling Recomendations</h2>Sorry, no free times were found<hr>");
+
+                } else if (obj.response.valid == "true") {
+
+                  $("#response").empty();
+                  $("#response").html("<h2>Scheduling Recomendations</h2>");
+                  
+                  var moreHTML = "<h3>Times when everyone is free:</h3>";
+                  var freeTimes = obj.response.freeTimes.freeTime
+                  for (i = 0; i < freeTimes.length; i++) {
+                    moreHTML = moreHTML + "Year: " + freeTimes[i].year + ", Month: " + freeTimes[i].month + ", Day: " + freeTimes[i].day + ", Start Time: " + freeTimes[i].startTime + ", End Time: " + freeTimes[i].endTime + "<br>";
+                  }
+                  moreHTML = moreHTML + "<hr>"
+                  $("#response").append(moreHTML);
+                }
+                alert(obj.response.freeTimes.freeTime.length);
+              });
+
+              
+
+            //end of on click
             });
 
 
@@ -68,7 +95,7 @@
 
     <h1>Team 4: Event Scheduler</h1>
 
-
+      <div id = "response"></div>
       <h3>Step 1: Select scheduling goal</h3> <input type="radio" id="requestType" name="requestType" value="findTime" checked>Find a time when everyone is free<br><input type="radio" id = "requestType" name="requestType" value="findAttendees" >Find the attendees who are free
       
       <h3>Step 2: Add a username (at least one needed)</h3> 
