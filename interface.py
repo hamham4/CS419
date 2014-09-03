@@ -10,10 +10,11 @@ from collections import namedtuple
 from datetime import date
 import httplib
 import urllib
+import json
 
 DateWindow = namedtuple("DateWindow", "startYear startMonth startDay endYear endMonth endDay")
 TimeWindow = namedtuple("TimeWindow", "startHour, startMin, endHour, endMin")
-HOST_URL = "putSOMETHINGHERE"
+HOST_URL = "localhost:10080"
 
 def refreshAllScreens(screen, win, subwin):
 	screen.noutrefresh()
@@ -129,21 +130,52 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		subwin.addstr(start_y, start_x, startHour + ":" + startMin + " - " + endHour + ":" + endMin)
 		start_y = start_y + 2 
 
-		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		recommendations = fetchRecommendations(attendees, dayWindow, timeWindow, schedulingGoal)
+		subwin.addstr(start_y, start_x, recommendations)
+		start_y = start_y + 1
+
+		subwin.addstr(start_y, start_x, "Hit Enter to display recommendations")
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+		input = subwin.getch()
+		subwin.clear() 
+		start_y = 0
+		start_x = 0
+		recommendations = fetchRecommendations(attendees, dayWindow, timeWindow, schedulingGoal)
+		subwin.addstr(start_y, start_x, recommendations)
+		start_y = start_y + 1
+
+		subwin.addstr(start_y, start_x, "Hit Enter to return to main menu.")
 		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
 		input = subwin.getch()
 
 def sendRequest(jsonRequest):
+	#sample1 = '{"request": {"type": "findTime","startYear": "2014","endYear": "2014","startMonth": "06","endMonth": "06","startDay": "17","endDay": "17","startTime": "1200","endTime": "2000","attendees": {"attendee": [{"username": "driskilq"}]}}}'
 	params = urllib.urlencode({'request': jsonRequest})
 	headers = {"Content-type": "application/x-www-form-urlencoded", "Accept": "text/plain"}
-	conn = httplib.HTTPConnection(HOST_URL)
-	conn.request("POST", "", params, headers)
-	response = conn.getresponse()
-	#https://docs.python.org/2/library/httplib.html
+	conn = httplib.HTTPConnection("team-four.appspot.com")
+	conn.request("POST", "/submit", params, headers)
+	response = conn.getresponse().read()
+
 	return response
 	
-def fetchRecommendations(jsonRequest):
+def fetchRecommendations(attendees, dayWindow, timeWindow, schedulingGoal):
+	jsonRequest = convertRequestToJson(attendees, dayWindow, timeWindow, schedulingGoal)
 	recommendations = sendRequest(jsonRequest)
+	response = ""
+	try:
+		decodedJson = json.loads(recommendations)
+		if schedulingGoal == "findTime":
+			isValid = decodedJson["response"]["valid"]
+			response = isValid
+
+			return response
+
+	except (ValueError, KeyError, TypeError):
+		print "JSON format error"
+
+
+
+
 
 
 #Puts the users request into json format
@@ -151,16 +183,16 @@ def convertRequestToJson(attendees, dayWindow, timeWindow, schedulingGoal):
 	#Retrieve values from named tuples
 	startYear, startMonth, startDay, endYear, endMonth, endDay = dayWindow
 	startHour, startMin, endHour, endMin = timeWindow
-	startTime = str(startHour) + ":" + str(startMin)
-	endTime = str(endHour) + ":" + str(endMin)
+	startTime = str(startHour) + str(startMin)
+	endTime = str(endHour) + str(endMin)
 
 	#creates a string of the request parameters in json format
-	jsonRequest = '{"request": {"type": "' + requestType + '","startYear": "' + str(startYear) + '","endYear": "' + str(endYear) + '","startMonth": "' + startMonth + '","endMonth": "' + endMonth + '","startDay": "' + startDay + '","endDay": "' + endDay + '","startTime": "' + startTime + '","endTime": "' + endTime  + '","attendees": {"attendee": ['
+	jsonRequest = '{"request": {"type": "' + schedulingGoal + '","startYear": "' + str(startYear) + '","endYear": "' + str(endYear) + '","startMonth": "' + str(startMonth) + '","endMonth": "' + str(endMonth) + '","startDay": "' + str(startDay) + '","endDay": "' + str(endDay) + '","startTime": "' + str(startTime) + '","endTime": "' + str(endTime)  + '","attendees": {"attendee": ['
 
 	for attendee in attendees:
-		jsonRequest = jsonRequest + '"{username": "' + attendee + '"},'
+		jsonRequest = jsonRequest + '{"username": "' + attendee + '"},'
 
-	jsonRequest = jsonRequest[0, len(jsonRequest) - 1]
+	jsonRequest = jsonRequest[0: len(jsonRequest) - 1]
 	jsonRequest = jsonRequest + ']}}}'
 
 	
