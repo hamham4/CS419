@@ -30,9 +30,13 @@ BusyBlock = namedtuple("BusyBlock", "year, month, day, startTime endTime")
     #],
     #message=tools.message_if_missing(CLIENT_SECRETS))
 
-def getCalendarEvents(userID, startYear, startMonth, startDay, startHour, startMin, endYear, endMonth, endDay, endHour, endMin):
-  userId = "rezalution786"
-
+def getCalendarEvents(userID, startYear, startMonth, startDay, endYear, endMonth, endDay):
+  #Default to getting the whole day's busy events
+  startHour = "00"
+  startMin = "00"
+  endHour = "23"
+  endMin = "59"
+  
   startDate = startYear + "-" + startMonth + "-" + startDay
   startDate = str(startDate)
 
