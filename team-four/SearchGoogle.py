@@ -30,6 +30,23 @@ BusyBlock = namedtuple("BusyBlock", "year, month, day, startTime endTime")
     #],
     #message=tools.message_if_missing(CLIENT_SECRETS))
 
+def getCalendarEvents(userID, startYear, startMonth, startDay, startHour, startMin, endYear, endMonth, endDay, endHour, endMin):
+  userId = "rezalution786"
+
+  startDate = startYear + "-" + startMonth + "-" + startDay
+  startDate = str(startDate)
+
+  startTimeParam = startHour + ":" + startMin
+  startTimeParam = str(startTimeParam)
+
+  endTime = endHour + ":" + endMin
+  endTime = str(endTime)
+
+  endDate = endYear + "-" + endMonth + "-" + endDay
+  endDate = str(endDate)
+
+  return googleSearch(userId, startTimeParam, startDate, endTime, endDate)
+
 #def googleSearch(userId, startYear, endYear, startMonth, endMonth, startday, endDay, startTime, endTime):
 def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
   #used from the google reference code
