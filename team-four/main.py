@@ -23,7 +23,7 @@ import logging
 import jinja2
 import os
 import scheduler
-import SearchGoogle
+#import SearchGoogle
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -44,6 +44,8 @@ class SubmissionHandler(webapp2.RequestHandler):
 	def post(self):
 		#Get request in json format from Post
 		jsonParameters = self.request.get('request', self)
+		logging.info("=== request ====")
+		logging.info(jsonParameters)
 		#Parse out parameters from json
 		requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees = jsonManipulator.getParsedParameters(jsonParameters)
  
@@ -67,7 +69,8 @@ class SubmissionHandler(webapp2.RequestHandler):
 
 		elif requestType == "findTime":
 			freeTimes = scheduler.getCommonFreeTimes(allFreeTimes, startTime, endTime)
-
+			logging.info("===recommendations====")
+			logging.info(freeTimes)
 			jsonFreeTimes = jsonManipulator.getFindTimeResponse(freeTimes)
 			return jsonFreeTimes
 
@@ -111,7 +114,9 @@ class SubmissionHandler(webapp2.RequestHandler):
 	@staticmethod
 	def convertToFreeTimes(busyTimesList, year, month, day):
 		freeTimesList = list()
-		if len(busyTimesList) == 0:
+		logging.info("===busy time list====")
+		logging.info(busyTimesList)
+		if busyTimesList == 0 or len(busyTimesList) == 0:
 			
 			freeBlock = FreeBlock(year, month, day, "0000", "2359")
 			freeTimesList.append(freeBlock)
