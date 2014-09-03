@@ -163,6 +163,7 @@ def convertRequestToJson(attendees, dayWindow, timeWindow, schedulingGoal):
 	jsonRequest = jsonRequest[0, len(jsonRequest) - 1]
 	jsonRequest = jsonRequest + ']}}}'
 
+	
 	return jsonRequest
 
 

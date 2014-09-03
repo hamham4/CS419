@@ -8,8 +8,8 @@ startMonth = xx
 EndMonth = xx
 startDay = xx
 endDay = xx
-startTime = xx:xx (24 hr)
-endTime = xx:xx (24 hr)
+startTime = xxxx (24 hr)
+endTime = xxxx (24 hr)
 
 
 {"request": {
@@ -20,8 +20,8 @@ endTime = xx:xx (24 hr)
   "endMonth": "08",
   "startDay": "21",
   "endDay": "21",
-  "startTime": "09:30",
-  "endTime": "13:30",
+  "startTime": "0930",
+  "endTime": "1330",
   "attendees": {
     "attendee": [
       {"username": "thorups"},
@@ -30,3 +30,18 @@ endTime = xx:xx (24 hr)
     ]
   }
 }}
+
+== Repsonse Format in Json ==
+
+
+== Busy Block Named Tuple ==
+
+== Free Block Named Tuple ==
+
+
+== Time and Date Info ==
+- Time in 24hr time hhmm
+- Month mm
+- Year yyyy
+- Day dd
+- Assumed pacific time
