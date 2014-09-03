@@ -21,14 +21,14 @@ from oauth2client import tools
 
 BusyBlock = namedtuple("BusyBlock", "year, month, day, startTime endTime")
 
-CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), 'client_secrets.json')
+#CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), 'client_secrets.json')
 
-FLOW = client.flow_from_clientsecrets(CLIENT_SECRETS,
-  scope=[
-      'https://www.googleapis.com/auth/calendar',
-      'https://www.googleapis.com/auth/calendar.readonly',
-    ],
-    message=tools.message_if_missing(CLIENT_SECRETS))
+#FLOW = client.flow_from_clientsecrets(CLIENT_SECRETS,
+  #scope=[
+      #'https://www.googleapis.com/auth/calendar',
+      #'https://www.googleapis.com/auth/calendar.readonly',
+    #],
+    #message=tools.message_if_missing(CLIENT_SECRETS))
 
 #def googleSearch(userId, startYear, endYear, startMonth, endMonth, startday, endDay, startTime, endTime):
 def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
@@ -78,9 +78,9 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
         f.write(newData)
         f.close()
 
-      ld_writeDicts('/Users/Rezalution/Documents/LiClipse Workspace/Calendar/results.json', events)
+      ld_writeDicts('results.json', events)
 
-      #busyTimes = list()
+      busyTimes = list()
 
       with open("results.json") as json_file:
         json_data = json.load(json_file)
