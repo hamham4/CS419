@@ -47,10 +47,13 @@ class SubmissionHandler(webapp2.RequestHandler):
 		requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees = jsonManipulator.getParsedParameters(jsonParameters)
  
 		allFreeTimes = SubmissionHandler.getAllFreeTimes(attendees, startYear, endYear, startMonth, endMonth, startDay, endDay)
-
+		logging.info("===free times====")
+		logging.info(allFreeTimes)
+		#self.response.write(allFreeTimes)
 		recommendations = SubmissionHandler.getRecommendations(allFreeTimes, requestType, startYear, endYear, startMonth, endMonth, startDay, endDay, startTime, endTime, attendees)
+		
+		
 		self.response.write(recommendations)
-		self.response.write("\n cheese")
 		logging.info("===recommendations====")
 		logging.info(recommendations)
 	@staticmethod
@@ -62,10 +65,10 @@ class SubmissionHandler(webapp2.RequestHandler):
 			return freeAttendees
 
 		elif requestType == "findTime":
-			freeTimes = scheduler.getCommonFreeTimes(allFreeTimes)
+			freeTimes = scheduler.getCommonFreeTimes(allFreeTimes, startTime, endTime)
 
-			#TO DO= CHANGE THE FORMAT THIS IS RETURNED IN #
-			return freeTimes
+			jsonFreeTimes = jsonManipulator.getFindTimeResponse(freeTimes)
+			return jsonFreeTimes
 
 		else:
 			return "error! invalid request type"
