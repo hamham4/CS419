@@ -28,9 +28,9 @@ endt = '1200'
 
 def getAttendees( allFreeTimes, day, month, year, sTime, eTime ):
 	avail = list()
-
-	for key in sorted(allFreeTimes):
-		for n in allFreeTimes[key]:
+	defaultDay = allFreeTimes[0]
+	for key in sorted(defaultDay):
+		for n in defaultDay[key]:
 			for block in n:
 				if int(block.year) == int(year) and int(block.month) == int(month) and int(block.day) == int(day) and int( block.startTime ) <= int(sTime) and int( block.endTime ) >= int(eTime):
 					avail.append(key)
