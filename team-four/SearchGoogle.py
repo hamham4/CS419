@@ -14,21 +14,36 @@ from collections import namedtuple
 #import tzlocal
 #import pytz
 
-from apiclient import discovery
-from oauth2client import file
+
+from apiclient.discovery import build
+from oauth2client.file import Storage
 from oauth2client import client
-from oauth2client import tools
+from oauth2client.tools import run
+from oauth2client.client import OAuth2WebServerFlow
+import gflags
+
 
 BusyBlock = namedtuple("BusyBlock", "year, month, day, startTime endTime")
 
-#CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), 'client_secrets.json')
+# CLIENT_SECRETS = os.path.join(os.path.dirname(__file__), 'client_secrets.json')
 
-#FLOW = client.flow_from_clientsecrets(CLIENT_SECRETS,
-  #scope=[
-      #'https://www.googleapis.com/auth/calendar',
-      #'https://www.googleapis.com/auth/calendar.readonly',
-    #],
-    #message=tools.message_if_missing(CLIENT_SECRETS))
+# FLOW = client.flow_from_clientsecrets(CLIENT_SECRETS,
+#   scope=[
+#       'https://www.googleapis.com/auth/calendar',
+#       'https://www.googleapis.com/auth/calendar.readonly',
+#     ],
+#     message=tools.message_if_missing(CLIENT_SECRETS))
+
+FLAGS = gflags.FLAGS
+FLOW = OAuth2WebServerFlow(
+    client_id='350349023880-2f831jg4i6m8ee5h9f7jp742cmqm8efc.apps.googleusercontent.com',
+    client_secret='ZpguubUd9SEH9pkVvl-QPi8G',
+     scope=[
+      'https://www.googleapis.com/auth/calendar',
+      'https://www.googleapis.com/auth/calendar.readonly',
+    ],
+    user_agent='team-four/1')
+
 
 def getCalendarEvents(userID, startYear, startMonth, startDay, endYear, endMonth, endDay):
   #Default to getting the whole day's busy events
@@ -36,36 +51,38 @@ def getCalendarEvents(userID, startYear, startMonth, startDay, endYear, endMonth
   startMin = "00"
   endHour = "23"
   endMin = "59"
-  
-  startDate = startYear + "-" + startMonth + "-" + startDay
+
+  startDate = str(startYear) + "-" + str(startMonth) + "-" + str(startDay)
   startDate = str(startDate)
 
-  startTimeParam = startHour + ":" + startMin
+  startTimeParam = str(startHour) + ":" + str(startMin)
   startTimeParam = str(startTimeParam)
 
-  endTime = endHour + ":" + endMin
+  endTime = str(endHour) + ":" + str(endMin)
   endTime = str(endTime)
 
-  endDate = endYear + "-" + endMonth + "-" + endDay
+  endDate = str(endYear) + "-" + str(endMonth) + "-" + str(endDay)
   endDate = str(endDate)
 
-  return googleSearch(userId, startTimeParam, startDate, endTime, endDate)
+  return googleSearch(userID, startTimeParam, startDate, endTime, endDate)
 
 #def googleSearch(userId, startYear, endYear, startMonth, endMonth, startday, endDay, startTime, endTime):
 def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
   #used from the google reference code
-  storage = file.Storage('sample.dat')
+  storage = Storage('calendar.dat')
   credentials = storage.get()
   if credentials is None or credentials.invalid:
     ##print credentials
-    credentials = tools.run_flow(FLOW, storage, flags)
+    credentials = run(FLOW, storage)
 
   # Create an httplib2.Http object to handle our HTTP requests and authorize it with our good Credentials.
   http = httplib2.Http()
   http = credentials.authorize(http)
 
   # Construct the service object for the interacting with the Calendar API.
-  service = discovery.build('calendar', 'v3', http=http)
+
+  service = build(serviceName='calendar', version='v3', http=http,
+       developerKey='AIzaSyCInh7DEEH7Zv2H-htNy7o9Z_7ktqkWY1Q')
 
   try:
 
