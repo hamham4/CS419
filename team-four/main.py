@@ -23,7 +23,7 @@ import logging
 import jinja2
 import os
 import scheduler
-#import SearchGoogle
+import SearchGoogle
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -86,9 +86,11 @@ class SubmissionHandler(webapp2.RequestHandler):
 							##DEMO##
 						busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
 						#busyTeachingTimesList = [BusyBlock(year='2014', month='09', day='12', startTime=u'0900', endTime=u'1100')]
-					
+						#busyTeachingTimesList = []
 						busyCalendarTimesList = []
-						#busyCalendarTimesList = SearchGoogle.googleSearch(attendee, "0900", "040303", "0000", "dafda")
+						#busyCalendarTimesList = SearchGoogle.getCalendarEvents(attendee, year, month, day, year, month, day)
+						#logging.info("===calendar events====")
+						#logging.info(busyCalendarTimesList)
 
 						#Convert the busy teaching times to free times
 						freeTeachingTimesList = SubmissionHandler.convertToFreeTimes(busyTeachingTimesList, year, month, day)
