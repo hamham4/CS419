@@ -61,8 +61,8 @@ class SubmissionHandler(webapp2.RequestHandler):
 		if requestType == "findAttendees":
 			freeAttendees = scheduler.getAttendees(allFreeTimes, startDay, startMonth, startYear, startTime, endTime)
 
-			#TO DO - CHANGE THE FORMAT THIS IS RETURNED IN #
-			return freeAttendees
+			jsonAttendees = jsonManipulator.getAttendeesResponse(freeAttendees)
+			return jsonAttendees
 
 		elif requestType == "findTime":
 			freeTimes = scheduler.getCommonFreeTimes(allFreeTimes, startTime, endTime)
