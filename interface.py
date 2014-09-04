@@ -36,7 +36,7 @@ def displayOptions(screen, subwin):
 	start_y = start_y + 1
 	subwin.addstr(start_y, start_x, "4: Edit window times (default 09:00 - 13:00)")
 	start_y = start_y + 1
-	subwin.addstr(start_y, start_x, "5: Get scheduling recommendations")
+	subwin.addstr(start_y, start_x, "5: Validate and get scheduling recommendations")
 	start_y = start_y + 1
 	
 	#Returns the number of options to help with formatting later
@@ -93,7 +93,7 @@ def isInputValid(screen, subwin, win, attendees, dayWindow, timeWindow, scheduli
 
 		input = subwin.getch()
 		return False
-		
+
 	elif  not str(startYear).isdigit() or not str(endYear).isdigit() or not str(startMonth).isdigit or not str(endMonth).isdigit() or not str(startDay).isdigit() or not str(endDay).isdigit():
 		#Return to options window
 		subwin.addstr(start_y, start_x, "Years, months, and days must be expressed in numbers.", curses.color_pair(1))
@@ -446,14 +446,6 @@ def getDatePart(part, screen, subwin, win, y_position):
 		input = subwin.getstr()
 		return input
 
-def validateDate():
-	pass
-
-def validateTime():
-	pass
-
-def validateRange():
-	pass
 
 def getSchedulingSelection(screen, subwin, win):
 	x = None
@@ -493,8 +485,25 @@ def getSchedulingGoal(screen, subwin, win):
 
 		userSelection = getSchedulingSelection(screen, subwin, win)
 		refreshAllScreens(screen, win, subwin)
+		subwin.clear()
+		start_y = 0
+		subwin.addstr(start_y, start_x, "Selection was saved.")
+		start_y = start_y + 1
+		
+		#Refresh screens
+		refreshAllScreens(screen, win, subwin)
 
-	#Turn off echo and cursor
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Hit Enter to continue")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+	
+		input = subwin.getch()
+
+
+
+
+	#Turn off echo and cursor	
 	curses.echo()
 	curses.curs_set(0)
 
@@ -541,7 +550,7 @@ def specifyTimeWindow(screen, subwin, win):
 
 	subwin.clear()
 	start_y = 0
-	subwin.addstr(start_y, start_x, "Time window " + startHour+ ":" + startMin + " - " + endHour + ":" + endMin + " was saved.")
+	subwin.addstr(start_y, start_x, "Time window " + startHour+ ":" + addLeadingZero(startMin) + " - " + endHour + ":" + addLeadingZero(endMin) + " was saved.")
 	start_y = start_y + 1
 	
 	#Refresh screens
