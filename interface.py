@@ -78,6 +78,10 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 	start_y = 0
 	start_x = 0
 
+	#Retrieve values from named tuples
+	startYear, startMonth, startDay, endYear, endMonth, endDay = dayWindow
+	startHour, startMin, endHour, endMin = timeWindow
+
 	if attendees == None or len(attendees) == 0:
 		#Return to options window
 		subwin.addstr(start_y, start_x, "You need to enter at least one username.", curses.color_pair(1))
@@ -88,6 +92,61 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 
 		input = subwin.getch()
 		return
+	elif int(startYear) > int (endYear):
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Start year cannot be larger than end year.", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+		input = subwin.getch()
+		return
+	elif int(startYear) == int(endYear) and int(startMonth) > int(endMonth):
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Start month cannot be larger than end month.", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+		input = subwin.getch()
+		return
+	elif int(startYear) == int(endYear) and int(startMonth) == int(endMonth) and int(startDay) > int(endDay):
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Start day cannot be larger than end day.", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+		input = subwin.getch()
+		return
+	elif int(startHour) > int(endHour):
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Start hour cannot be larger than end hour.", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+		input = subwin.getch()
+		return
+	elif int(startHour) <= int(endHour) and int(startMin) > int(endMin):
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Start min cannot be larger than end min.", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+		input = subwin.getch()
+		return
+	elif schedulingGoal == "findAttendees" and int(startDay) != int(endDay):
+		#Return to options window
+		subwin.addstr(start_y, start_x, "A specific day must be selected for finding attendees", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+		input = subwin.getch()
+		return
+	 
 	else:
 		subwin.addstr(start_y, start_x, "The following criteria will be submitted:")
 		start_y = start_y + 1
@@ -119,9 +178,7 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		subwin.addstr(start_y, start_x, "Event window set for:", curses.A_BOLD)
 		start_y = start_y + 1
 
-		#Retrieve values from named tuples
-		startYear, startMonth, startDay, endYear, endMonth, endDay = dayWindow
-		startHour, startMin, endHour, endMin = timeWindow
+		
 
 		subwin.addstr(start_y, start_x, str(startYear) + "/" + str(startMonth) + "/" + str(startDay) + " - " + str(endYear) + "/" + str(endMonth) + "/" + str(endDay))
 		start_y = start_y + 1
@@ -130,18 +187,15 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		subwin.addstr(start_y, start_x, startHour + ":" + startMin + " - " + endHour + ":" + endMin)
 		start_y = start_y + 2 
 
-		recommendations = fetchRecommendations(attendees, dayWindow, timeWindow, schedulingGoal)
-		subwin.addstr(start_y, start_x, recommendations)
-		start_y = start_y + 1
 
 		subwin.addstr(start_y, start_x, "Hit Enter to display recommendations")
 		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+		start_y = start_y + 1
 		input = subwin.getch()
-		subwin.clear() 
-		start_y = 0
-		start_x = 0
-		recommendations = fetchRecommendations(attendees, dayWindow, timeWindow, schedulingGoal)
-		subwin.addstr(start_y, start_x, recommendations)
+
+		subwin.addstr(start_y, start_x, "Recommendations:", curses.A_BOLD)
+		start_y = start_y + 1
+		start_y = fetchRecommendations(attendees, dayWindow, timeWindow, schedulingGoal, start_y, screen, subwin, win)
 		start_y = start_y + 1
 
 		subwin.addstr(start_y, start_x, "Hit Enter to return to main menu.")
@@ -158,25 +212,57 @@ def sendRequest(jsonRequest):
 
 	return response
 	
-def fetchRecommendations(attendees, dayWindow, timeWindow, schedulingGoal):
+def fetchRecommendations(attendees, dayWindow, timeWindow, schedulingGoal, y_position, screen, subwin, win):
+	start_y = y_position
+	start_x = 0
 	jsonRequest = convertRequestToJson(attendees, dayWindow, timeWindow, schedulingGoal)
 	recommendations = sendRequest(jsonRequest)
 	response = ""
 	try:
 		decodedJson = json.loads(recommendations)
-		if schedulingGoal == "findTime":
-			isValid = decodedJson["response"]["valid"]
-			response = isValid
+		isValid = decodedJson["response"]["valid"]
 
-			return response
+		if isValid == "false":
+			subwin.addstr(start_y, start_x, "No matches were found.")
+			start_y = start_y + 1
+		else:
+			if schedulingGoal == "findAttendees":
+				subwin.addstr(start_y, start_x, "Usernames who are available:")
+				start_y = start_y + 1
+				
+				numAttendees = len(decodedJson["response"]["attendees"]["attendee"])
+				attendeeString = ""
+				
+				for i in range(0, numAttendees):
+					attendee = decodedJson["response"]["attendees"]["attendee"][i]["username"]
+					attendeeString =  attendeeString + attendee + ", "
 
+				attendeeString = attendeeString[0 : len(attendeeString) - 2]
+				subwin.addstr(start_y, start_x, attendeeString)
+				start_y = start_y + 1
+
+
+			elif schedulingGoal == "findTime":
+				subwin.addstr(start_y, start_x, "Times when everyone is free:")
+				start_y = start_y + 1
+
+				numFreeTimes = len(decodedJson["response"]["freeTimes"]["freeTime"])
+				for i in range (0, numFreeTimes):
+					year = decodedJson["response"]["freeTimes"]["freeTime"][i]["year"]
+					month = decodedJson["response"]["freeTimes"]["freeTime"][i]["month"]
+					day = decodedJson["response"]["freeTimes"]["freeTime"][i]["day"]
+					startTime = decodedJson["response"]["freeTimes"]["freeTime"][i]["startTime"]
+					endTime = decodedJson["response"]["freeTimes"]["freeTime"][i]["endTime"]
+					freeTimeString = "Year: " + year + ", Month: " + month + ", Day: " + day + ", Start Time: " + startTime + ", End Time: " + endTime
+					subwin.addstr(start_y, start_x, freeTimeString)
+					start_y = start_y + 1
+
+	
 	except (ValueError, KeyError, TypeError):
 		print "JSON format error"
 
 
-
-
-
+	return start_y
 
 #Puts the users request into json format
 def convertRequestToJson(attendees, dayWindow, timeWindow, schedulingGoal):
@@ -234,6 +320,9 @@ def validateDate():
 	pass
 
 def validateTime():
+	pass
+
+def validateRange():
 	pass
 
 def getSchedulingSelection(screen, subwin, win):
@@ -308,7 +397,7 @@ def specifyTimeWindow(screen, subwin, win):
 	startMin = getTimePart("min", screen, subwin, win, start_y)
 	start_y = start_y + 1
 
-	validateTime()
+
 
 	#Get end time of window
 	subwin.addstr(start_y, start_x, "Enter end time", curses.color_pair(2))
@@ -318,7 +407,7 @@ def specifyTimeWindow(screen, subwin, win):
 	endMin = getTimePart("min", screen, subwin, win, start_y)
 	start_y = start_y + 1
 
-	validateTime()
+
 
 	subwin.clear()
 	start_y = 0
@@ -364,7 +453,7 @@ def specifyDataWindow(screen, subwin, win):
 	startDay = getDatePart("day", screen, subwin, win, start_y)
 	start_y = start_y + 1
 
-	validateDate()
+	
 
 	#Get end date of window
 	subwin.addstr(start_y, start_x, "Enter end date", curses.color_pair(2))
@@ -376,7 +465,6 @@ def specifyDataWindow(screen, subwin, win):
 	endDay = getDatePart("day", screen, subwin, win, start_y)
 	start_y = start_y + 1
 
-	validateDate() 
 
 	subwin.clear()
 	start_y = 0
@@ -449,9 +537,12 @@ def selectUsernames(screen, subwin, win):
 	#Dispaly list of added attendees
 	subwin.addstr(start_y, start_x, "The following attendees were added: ", curses.A_BOLD)
 	start_y = start_y + 1
+	cleanAttendees = list()
 	for attendee in attendees:
-		subwin.addstr(start_y, start_x, attendee)
-		start_y = start_y + 1
+		if attendee.isspace() == False:
+			cleanAttendees.append(attendee)
+			subwin.addstr(start_y, start_x, attendee)
+			start_y = start_y + 1
 
 		#Refresh screen (is the necessary?)
 		refreshAllScreens(screen, win, subwin)
@@ -464,7 +555,7 @@ def selectUsernames(screen, subwin, win):
 	refreshAllScreens(screen, win, subwin)
 
 	input = subwin.getch()
-	return attendees
+	return cleanAttendees
 
 
 def main(screen):
@@ -472,7 +563,7 @@ def main(screen):
 	attendees = None
 
 	#Set default date window as tomorrow
-	dateWindow = DateWindow(date.today().year, date.today().month, date.today().day, date.today().year, date.today().month, date.today().day + 1)
+	dateWindow = DateWindow(date.today().year, date.today().month, date.today().day, date.today().year, date.today().month, date.today().day)
 	timeWindow = TimeWindow("9", "00", "17", "00")
 	
 	#Set default scheduling goals
