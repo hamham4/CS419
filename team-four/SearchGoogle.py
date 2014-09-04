@@ -72,16 +72,17 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
   storage = Storage('calendar.dat')
   credentials = storage.get()
   if credentials is None or credentials.invalid:
+    pass
     ##print credentials
-    credentials = run(FLOW, storage)
+    #credentials = run(FLOW, storage)
 
   # Create an httplib2.Http object to handle our HTTP requests and authorize it with our good Credentials.
-  http = httplib2.Http()
-  http = credentials.authorize(http)
+  #http = httplib2.Http()
+  #http = credentials.authorize(http)
 
   # Construct the service object for the interacting with the Calendar API.
 
-  service = build(serviceName='calendar', version='v3', http=http,
+  service = build(serviceName='calendar', version='v3',
        developerKey='AIzaSyCInh7DEEH7Zv2H-htNy7o9Z_7ktqkWY1Q')
 
   try:
@@ -106,6 +107,7 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
 		#order by the start time, have it all as single events, min and max time are our parameters we put in
 		#also we are having it return in the time zone of the local machine, not useful for full day events but very helpful for datetime events
         events = service.events().list(calendarId=calendarID, pageToken=page_token, orderBy=startTime, singleEvents=True, timeMin=myStartTime, timeMax=myEndTime).execute()
+        print events
       except:
 	    #when we get an error from the events return, normally meaning a bad onid id
         events = "NoID"
