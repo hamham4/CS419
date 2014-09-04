@@ -135,7 +135,8 @@ class SubmissionHandler(webapp2.RequestHandler):
 
 		#Takes time as string and returns mins in int
 		def timeToMins(time):
-			hour = int(time) / 100
+			hour = int(int(time) / 100)
+
 			length = len(time)
 			mins = int(time[(length - 2) : length])
 
