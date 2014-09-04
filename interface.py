@@ -34,7 +34,7 @@ def displayOptions(screen, subwin):
 	start_y = start_y + 1
 	subwin.addstr(start_y, start_x, "3: Edit window dates (default today)")
 	start_y = start_y + 1
-	subwin.addstr(start_y, start_x, "4: Edit window times (default 9am - 5pm)")
+	subwin.addstr(start_y, start_x, "4: Edit window times (default 09:00 - 13:00)")
 	start_y = start_y + 1
 	subwin.addstr(start_y, start_x, "5: Get scheduling recommendations")
 	start_y = start_y + 1
@@ -74,8 +74,9 @@ def getMenuChoice(screen, subwin, win):
 	#Return the user's selection
 	return userSelection
 
-def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, schedulingGoal):
-	start_y = 0
+
+def isInputValid(screen, subwin, win, attendees, dayWindow, timeWindow, schedulingGoal, y_position):
+	start_y = y_position
 	start_x = 0
 
 	#Retrieve values from named tuples
@@ -91,7 +92,110 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
 
 		input = subwin.getch()
-		return
+		return False
+		
+	elif  not str(startYear).isdigit() or not str(endYear).isdigit() or not str(startMonth).isdigit or not str(endMonth).isdigit() or not str(startDay).isdigit() or not str(endDay).isdigit():
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Years, months, and days must be expressed in numbers.", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+
+		input = subwin.getch()
+		return False
+
+	elif not str(startHour).isdigit() or not str(endHour).isdigit() or not str(startMin).isdigit() or not str(endMin).isdigit():
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Hours and minutes must be expressed in numbers.", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+
+		input = subwin.getch()
+		return False
+
+	elif len(str(startYear)) != 4 or len(str(endYear)) != 4 :
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Must enter 4 digit year", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+
+		input = subwin.getch()
+		return False
+
+	elif len(str(startHour)) > 2 or len(str(endHour)) > 2 or len(str(startMin)) > 2 or len(str(endMin)) > 2:
+
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Must enter 2 digit hour and minute", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+
+		input = subwin.getch()
+		return False
+
+	elif len(str(startMonth)) > 2 or len(str(endMonth)) > 2 or len(str(startDay)) > 2 or len(str(endDay)) > 2:
+
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Must enter 2 digit month and day", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+
+		input = subwin.getch()
+		return False
+
+	elif int(startMonth) < 1 or int(startMonth) > 12 or int(endMonth) < 1 or int(endMonth) > 12:
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Month must be from 1-12", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+
+		input = subwin.getch()
+		return False
+
+	elif int(startDay) < 1 or int(startDay) > 31 or int(endDay) < 1 or int(endDay) > 31:
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Day must be from 1-31", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+
+		input = subwin.getch()
+		return False
+
+	elif int(startHour) < 0 or int(startHour) > 23 or int(endHour) < 0 or int(endHour) > 23:
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Hour must be from 0-23", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+
+		input = subwin.getch()
+		return False
+
+	elif int(startMin) < 0 or int(startMin) > 59 or int(endMin) < 0 or int(endMin) > 59:
+		#Return to options window
+		subwin.addstr(start_y, start_x, "Minute must be from 0-59", curses.color_pair(1))
+		start_y = start_y + 1
+		subwin.addstr(start_y, start_x, "Hit Enter to return to menu")
+		curses.curs_set(0)
+		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
+
+		input = subwin.getch()
+		return False
+
+
 	elif int(startYear) > int (endYear):
 		#Return to options window
 		subwin.addstr(start_y, start_x, "Start year cannot be larger than end year.", curses.color_pair(1))
@@ -100,7 +204,8 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		curses.curs_set(0)
 		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
 		input = subwin.getch()
-		return
+		return False
+	
 	elif int(startYear) == int(endYear) and int(startMonth) > int(endMonth):
 		#Return to options window
 		subwin.addstr(start_y, start_x, "Start month cannot be larger than end month.", curses.color_pair(1))
@@ -109,7 +214,8 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		curses.curs_set(0)
 		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
 		input = subwin.getch()
-		return
+		return False
+	
 	elif int(startYear) == int(endYear) and int(startMonth) == int(endMonth) and int(startDay) > int(endDay):
 		#Return to options window
 		subwin.addstr(start_y, start_x, "Start day cannot be larger than end day.", curses.color_pair(1))
@@ -118,7 +224,8 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		curses.curs_set(0)
 		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
 		input = subwin.getch()
-		return
+		return False
+	
 	elif int(startHour) > int(endHour):
 		#Return to options window
 		subwin.addstr(start_y, start_x, "Start hour cannot be larger than end hour.", curses.color_pair(1))
@@ -127,7 +234,8 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		curses.curs_set(0)
 		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
 		input = subwin.getch()
-		return
+		return False
+	
 	elif int(startHour) <= int(endHour) and int(startMin) > int(endMin):
 		#Return to options window
 		subwin.addstr(start_y, start_x, "Start min cannot be larger than end min.", curses.color_pair(1))
@@ -136,7 +244,8 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		curses.curs_set(0)
 		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
 		input = subwin.getch()
-		return
+		return False 
+	
 	elif schedulingGoal == "findAttendees" and int(startDay) != int(endDay):
 		#Return to options window
 		subwin.addstr(start_y, start_x, "A specific day must be selected for finding attendees", curses.color_pair(1))
@@ -145,9 +254,22 @@ def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, sc
 		curses.curs_set(0)
 		subwin.chgat(start_y, 4, 5, curses.A_BOLD | curses.color_pair(2))
 		input = subwin.getch()
-		return
+		return False
 	 
 	else:
+		return True
+
+
+def getRecommendations(screen, subwin, win, attendees, dayWindow, timeWindow, schedulingGoal):
+	start_y = 0
+	start_x = 0
+
+	#Retrieve values from named tuples
+	startYear, startMonth, startDay, endYear, endMonth, endDay = dayWindow
+	startHour, startMin, endHour, endMin = timeWindow
+
+	
+	if isInputValid(screen, subwin, win, attendees, dayWindow, timeWindow, schedulingGoal, start_y) == True:
 		subwin.addstr(start_y, start_x, "The following criteria will be submitted:")
 		start_y = start_y + 1
 		curses.curs_set(0)
@@ -264,16 +386,24 @@ def fetchRecommendations(attendees, dayWindow, timeWindow, schedulingGoal, y_pos
 
 	return start_y
 
+def addLeadingZero(digit):
+	if len(str(digit)) == 1:
+		paddedDigit = "0" + str(digit)
+		return paddedDigit
+	else:
+		return str(digit)
+
 #Puts the users request into json format
 def convertRequestToJson(attendees, dayWindow, timeWindow, schedulingGoal):
 	#Retrieve values from named tuples
 	startYear, startMonth, startDay, endYear, endMonth, endDay = dayWindow
 	startHour, startMin, endHour, endMin = timeWindow
-	startTime = str(startHour) + str(startMin)
-	endTime = str(endHour) + str(endMin)
+	
+	startTime = addLeadingZero(startHour) + addLeadingZero(startMin)
+	endTime = addLeadingZero(endHour) + addLeadingZero(endMin)
 
 	#creates a string of the request parameters in json format
-	jsonRequest = '{"request": {"type": "' + schedulingGoal + '","startYear": "' + str(startYear) + '","endYear": "' + str(endYear) + '","startMonth": "' + str(startMonth) + '","endMonth": "' + str(endMonth) + '","startDay": "' + str(startDay) + '","endDay": "' + str(endDay) + '","startTime": "' + str(startTime) + '","endTime": "' + str(endTime)  + '","attendees": {"attendee": ['
+	jsonRequest = '{"request": {"type": "' + schedulingGoal + '","startYear": "' + str(startYear) + '","endYear": "' + str(endYear) + '","startMonth": "' + addLeadingZero(startMonth) + '","endMonth": "' + addLeadingZero(endMonth) + '","startDay": "' + addLeadingZero(startDay) + '","endDay": "' + addLeadingZero(endDay) + '","startTime": "' + str(startTime) + '","endTime": "' + str(endTime)  + '","attendees": {"attendee": ['
 
 	for attendee in attendees:
 		jsonRequest = jsonRequest + '{"username": "' + attendee + '"},'
@@ -355,7 +485,7 @@ def getSchedulingGoal(screen, subwin, win):
 		subwin.addstr(start_y, start_x, "1. Get a time when everyone is available")
 		start_y = start_y + 1
 
-		subwin.addstr(start_y, start_x, "2. Get a list of who is availabe")
+		subwin.addstr(start_y, start_x, "2. Get a list of who is available")
 		start_y = start_y + 1
 
 		subwin.addstr(start_y, start_x, "Selection: ")
@@ -574,7 +704,7 @@ def main(screen):
 	curses.init_pair(2, curses.COLOR_CYAN, curses.COLOR_BLACK)
 
 	#Adds a title and fills in remaining line
-	screen.addstr("Time Finder", curses.A_REVERSE)
+	screen.addstr("Scheduling Assistant", curses.A_REVERSE)
 	screen.chgat(-1, curses.A_REVERSE)
 
 	#Adds instructions at the bottom of the screen and highlights key
