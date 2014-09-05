@@ -171,7 +171,7 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
 				busyBlock = BusyBlock(year, month, day, startTime, endTimes)
 				busyTimes.append(busyBlock)
 		      
-			  return busyTimes
+		  return busyTimes
 		  
 		  if not page_token:
                    break
