@@ -31,14 +31,14 @@ BusyBlock = namedtuple("BusyBlock", "year, month, day, startTime endTime")
 #     message=tools.message_if_missing(CLIENT_SECRETS))
 
 # FLAGS = gflags.FLAGS
-FLOW = OAuth2WebServerFlow(
-    client_id='350349023880-2f831jg4i6m8ee5h9f7jp742cmqm8efc.apps.googleusercontent.com',
-    client_secret='ZpguubUd9SEH9pkVvl-QPi8G',
-     scope=[
-      'https://www.googleapis.com/auth/calendar',
-      'https://www.googleapis.com/auth/calendar.readonly',
-    ],
-    user_agent='team-four/1')
+# FLOW = OAuth2WebServerFlow(
+    # client_id='350349023880-2f831jg4i6m8ee5h9f7jp742cmqm8efc.apps.googleusercontent.com',
+    # client_secret='ZpguubUd9SEH9pkVvl-QPi8G',
+     # scope=[
+      # 'https://www.googleapis.com/auth/calendar',
+      # 'https://www.googleapis.com/auth/calendar.readonly',
+    # ],
+    # user_agent='team-four/1')
 
 
 def getCalendarEvents(userID, startYear, startMonth, startDay, endYear, endMonth, endDay):
@@ -83,82 +83,92 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
 	   
   calendar_client = gdata.calendar.client.CalendarClient()
 
-  page_token = None
-  
-  myStartTime = startDate + "T" + startTimeParam + ":01"
-  #end time  string put together  add :00 for the seconds or else it fails
-  myEndTime = endDate + "T" + endTime + ":00"
-  
-  calendarID = userId + "@gmail.com"
-  
-  urlBegin = 'https://www.google.com/calendar/feeds/'
-  urlEnd = '/public/full?orderby=starttime&singleevents=true&start-min='
-  urlComplete = urlBegin + calendarID + urlEnd + myStartTime + '&start-max=' + myEndTime
-  
-  feed = calendar_client.GetCalendarEventFeed(uri=urlComplete)
-  for i, an_event in zip(xrange(len(feed.entry)), feed.entry):
-      #print '\t%s. %s' % (i, an_event.title.text,)
-      for a_when in an_event.when:
-        #print '\t\tStart time: %s' % (a_when.start,)
-        #print '\t\tEnd time:   %s' % (a_when.end,)
-		
-        busyTimes = list()
-		
-        start = a_when.start
-        #start1 = str(start)
-        #print len(start)
-        if len(start) == 29:
-			st1 = start[0:29]
-			year = st1[0:4]
-			print year
-			month = st1[5:7]
-			print month
-			day = st1[8:10]
-			print day
-			sHour = st1[11:13]
-			sMin =  st1[14:16]
-			startTime = sHour + sMin
-			print startTime
-        if len(start) == 10:
-			st1 = start[0:10]
-			year = st1[0:4]
-			print year
-			month = st1[5:7]
-			print month
-			day = st1[8:10]
-			print day
-			sHour = st1[12:13]
-			sMin =  st1[14:15]
-			startTime = "0000"
-		
-        end = a_when.end
-        #end1 = str(end)
-        if len(end) == 29:
-			en1 = end[0:29]
-			eYear = en1[0:4]
-			print eYear
-			eMonth = en1[5:7]
-			print eMonth
-			eDay = en1[8:10]
-			print eDay
-			eHour = en1[11:13]
-			eMin =  en1[14:16]
-			endTimes = eHour + eMin
-			print endTimes
-        if len(end) == 10:
-			en1 = end[12:28]
-			eYear = en1[0:4]
-			eMonth = en1[5:7]
-			eDay = en1[8:10]
-			#eHour = en1[11:13]
-			#eMin =  en1[14:16]
-			endTimes = "0000"
 
-        #print year, month, day, startTime, endTimes
-        busyBlock = BusyBlock(year, month, day, startTime, endTime)
-        busyTimes.append(busyBlock)
-  #return busyTimes
-  
+  try:
+	  page_token = None
+	  
+	  myStartTime = startDate + "T" + startTimeParam + ":01"
+	  #end time  string put together  add :00 for the seconds or else it fails
+	  myEndTime = endDate + "T" + endTime + ":00"
+	  
+	  while True:
+	  
+		  calendarID = userId + "@gmail.com"
+		  
+		  urlBegin = 'https://www.google.com/calendar/feeds/'
+		  urlEnd = '/public/full?orderby=starttime&singleevents=true&start-min='
+		  urlComplete = urlBegin + calendarID + urlEnd + myStartTime + '&start-max=' + myEndTime
+		  
+		  feed = calendar_client.GetCalendarEventFeed(uri=urlComplete)
+		  for i, an_event in zip(xrange(len(feed.entry)), feed.entry):
+			  #print '\t%s. %s' % (i, an_event.title.text,)
+			  for a_when in an_event.when:
+				#print '\t\tStart time: %s' % (a_when.start,)
+				#print '\t\tEnd time:   %s' % (a_when.end,)
+				
+				busyTimes = list()
+				
+				start = a_when.start
+				#start1 = str(start)
+				#print len(start)
+				if len(start) == 29:
+					st1 = start[0:29]
+					year = st1[0:4]
+					print year
+					month = st1[5:7]
+					print month
+					day = st1[8:10]
+					print day
+					sHour = st1[11:13]
+					sMin =  st1[14:16]
+					startTime = sHour + sMin
+					print startTime
+				if len(start) == 10:
+					st1 = start[0:10]
+					year = st1[0:4]
+					print year
+					month = st1[5:7]
+					print month
+					day = st1[8:10]
+					print day
+					sHour = st1[12:13]
+					sMin =  st1[14:15]
+					startTime = "0000"
+				
+				end = a_when.end
+				#end1 = str(end)
+				if len(end) == 29:
+					en1 = end[0:29]
+					eYear = en1[0:4]
+					print eYear
+					eMonth = en1[5:7]
+					print eMonth
+					eDay = en1[8:10]
+					print eDay
+					eHour = en1[11:13]
+					eMin =  en1[14:16]
+					endTimes = eHour + eMin
+					print endTimes
+				if len(end) == 10:
+					en1 = end[12:28]
+					eYear = en1[0:4]
+					eMonth = en1[5:7]
+					eDay = en1[8:10]
+					#eHour = en1[11:13]
+					#eMin =  en1[14:16]
+					endTimes = "0000"
+
+				#print year, month, day, startTime, endTimes
+				busyBlock = BusyBlock(year, month, day, startTime, endTime)
+				busyTimes.append(busyBlock)
+		      
+			  return busyTimes
+		  
+		  if not page_token:
+                   break
+    
+  except client.AccessTokenRefreshError:
+    pass
 
   try:
 
@@ -256,8 +266,7 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
 
   #return events
   
-
-
+  
 if __name__ == '__main__':
   userId = "rezalution786"
 
