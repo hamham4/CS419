@@ -17,6 +17,16 @@ try:
   from xml.etree import ElementTree
 except ImportError:
   from elementtree import ElementTree
+#from apiclient import discovery
+from apiclient.discovery import build
+#from oauth2client import file
+#from oauth2client import client
+from oauth2client import tools
+from oauth2client.file import Storage
+from oauth2client.client import OAuth2WebServerFlow
+from oauth2client.tools import run
+from oauth2client import client
+from google.appengine.api import urlfetch
 
 
 BusyBlock = namedtuple("BusyBlock", "year, month, day, startTime endTime")
