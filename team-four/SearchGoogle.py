@@ -169,7 +169,7 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
 					endTimes = "0000"
 
 				#print year, month, day, startTime, endTimes
-				busyBlock = BusyBlock(year, month, day, startTime, endTime)
+				busyBlock = BusyBlock(year, month, day, startTime, endTimes)
 				busyTimes.append(busyBlock)
 		      
 			  return busyTimes
