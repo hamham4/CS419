@@ -77,9 +77,11 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
 		  urlBegin = 'https://www.google.com/calendar/feeds/'
 		  urlEnd = '/public/full?orderby=starttime&singleevents=true&start-min='
 		  urlComplete = urlBegin + calendarID + urlEnd + myStartTime + '&start-max=' + myEndTime
+		  try:
 		  
-		  feed = calendar_client.GetCalendarEventFeed(uri=urlComplete)
-		  
+			feed = calendar_client.GetCalendarEventFeed(uri=urlComplete)
+		  except:
+			return list()
 		  busyTimes = list()
 		  for i, an_event in zip(xrange(len(feed.entry)), feed.entry):
 			  #print '\t%s. %s' % (i, an_event.title.text,)
