@@ -23,7 +23,7 @@ import logging
 import jinja2
 import os
 import scheduler
-#import SearchGoogle
+import SearchGoogle
 
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader = jinja2.FileSystemLoader(os.path.dirname(__file__)),
@@ -79,6 +79,13 @@ class SubmissionHandler(webapp2.RequestHandler):
 
 	@staticmethod
 	def getAllFreeTimes(attendees, startYear, endYear, startMonth, endMonth, startDay, endDay):
+
+		def addLeadingZero(digit):
+			if len(str(digit)) == 1:
+				paddedDigit = "0" + str(digit)
+				return paddedDigit
+			else:
+				return str(digit)
 		allFreeTimes = list()
 		for year in range(int(startYear), int(endYear) + 1):
 			for month in range(int(startMonth), int(endMonth) + 1):
@@ -90,15 +97,17 @@ class SubmissionHandler(webapp2.RequestHandler):
 						busyTeachingTimesList = busy_times_db.busy_times_db(day, month, year, attendee)
 						#busyTeachingTimesList = [BusyBlock(year='2014', month='09', day='12', startTime=u'0900', endTime=u'1100')]
 						#busyTeachingTimesList = []
-						busyCalendarTimesList = []
-						#busyCalendarTimesList = SearchGoogle.getCalendarEvents(attendee, year, month, day, year, month, day)
-						#logging.info("===calendar events====")
-						#logging.info(busyCalendarTimesList)
+						#busyCalendarTimesList = []
+						busyCalendarTimesList = SearchGoogle.getCalendarEvents(attendee, year, addLeadingZero(month) , addLeadingZero(day), year, addLeadingZero(month), addLeadingZero(day))
+						busyCalendarTimesList.reverse()
+						logging.info("===calendar events====")
+						logging.info(busyCalendarTimesList)
 
 						#Convert the busy teaching times to free times
 						freeTeachingTimesList = SubmissionHandler.convertToFreeTimes(busyTeachingTimesList, year, month, day)
 
 						#Convert the busy calendar times to free times
+					
 						freeCalendarTimesList = SubmissionHandler.convertToFreeTimes(busyCalendarTimesList, year, month, day)
 					
 						#Get a list of the combined free times
@@ -124,6 +133,8 @@ class SubmissionHandler(webapp2.RequestHandler):
 			freeTimesList = busyToFreeTimeConverter.getFreeTimesList(busyTimesList)
 
 		return freeTimesList
+
+
 
 	#takes in two lists of free time named tuples for a day. 
 	#for each list it creates an array to hold all of the minutes in the day
