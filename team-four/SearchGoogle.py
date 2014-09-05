@@ -110,13 +110,12 @@ def googleSearch(userId, startTimeParam, startDate, endTime, endDate):
 		  urlComplete = urlBegin + calendarID + urlEnd + myStartTime + '&start-max=' + myEndTime
 		  
 		  feed = calendar_client.GetCalendarEventFeed(uri=urlComplete)
+		  busyTimes = list()
 		  for i, an_event in zip(xrange(len(feed.entry)), feed.entry):
 			  #print '\t%s. %s' % (i, an_event.title.text,)
 			  for a_when in an_event.when:
 				#print '\t\tStart time: %s' % (a_when.start,)
 				#print '\t\tEnd time:   %s' % (a_when.end,)
-				
-				busyTimes = list()
 				
 				start = a_when.start
 				#start1 = str(start)
